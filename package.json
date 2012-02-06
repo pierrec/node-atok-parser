@@ -1,0 +1,35 @@
+{
+  "author": "Pierre Curto"
+, "name": "atok-parser"
+, "description": "Parser generator based on the atok tokenizer"
+, "keywords": ["parser","async","stream","atok"]
+, "version": "0.0.1"
+, "homepage": "http://github.com/pierrec/node-atok-parser"
+, "repository": {
+    "type": "git"
+  , "url": "git://github.com/pierrec/node-atok-parser.git"
+  }
+, "main": "./lib/parser.js"
+, "bugs": { "url" : "http://github.com/pierrec/node-atok-parser/issues" }
+, "licenses":
+  [ {
+      "type": "MIT"
+    , "url": "http://github.com/pierrec/node-atok-parser/raw/master/LICENSE"
+    }
+  ]
+, "engines": {
+    "node": ">= 0.6"
+  }
+, "dependencies": {
+    "inherits": ">= 1.0"
+  , "require-like": ">= 0.1.1"
+  , "atok": ">= 0.1.4"
+  }
+, "devDependencies": {
+    "mocha": ">= 0.10"
+  , "bench": ">= 0.3"
+  }
+, "scripts": {
+    "test": "mocha test/*-test.js"
+  }
+}
