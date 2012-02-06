@@ -26,8 +26,8 @@ atok
         // idx=when using array of patterns, the index of the matched pattern
         if (token === 'error') {
             // Build the error message using positioning
-            var msg = self.trackData(token)
-            self.emit('error', new Error(msg.message))
+            var err = self.trackError(new Error('Dummy message'), token)
+            self.emit('error', err)
             return
         }
         // Add the data
