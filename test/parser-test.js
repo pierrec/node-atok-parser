@@ -2,8 +2,6 @@
  * Parser tests
 **/
 var assert = require('assert')
-var fs = require('fs')
-var path = require('path')
 
 var atokParser = require('..')
 var options = {}
@@ -46,7 +44,7 @@ describe('Parser', function () {
             done()
           break
           default:
-            throw new Error('Unknown type: ' + type)
+            done( new Error('Unknown type: ' + type) )
         }
       }
 
