@@ -11,12 +11,14 @@ var Tracker = require('./tracker')
 
 function noOp () {}
 
+// Copy properties from one object to another - not replacing if required
 function merge (a, b, soft) {
   for (var k in b)
     if (!soft || !a.hasOwnProperty(k)) a[k] = b[k]
   return a
 }
 
+// Show special characters for display
 function inspect (s) {
   return s
     .replace(/\\/g, '\\\\')
@@ -112,7 +114,7 @@ exports.createParser = function (file, parserOptions, atokOptions, parserModule)
   }
   Parser.prototype.destroy = noOp
   // Track current line and column
-  // type: {String | Boolean} platform type
+  // type: {String | Boolean} platform type (used to identify newline characters)
   Parser.prototype.track = function (type) {
     if (type) { // Turn tracking ON
       this.atokTracker.start(type)

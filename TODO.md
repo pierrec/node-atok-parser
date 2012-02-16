@@ -1,13 +1,13 @@
 # TODO
 
-## Features
-	* Helpers: last argument: last=[number|string|function]
-		* string(c, encoding): addRule(num || ['<c>','<c>'], utf8StringParser), where c is one of [",'] or integer
+php sessions
+auth_user|a:24:{s:7:"user_id";s:7:"3348537";s:8:"username";s:6:"JoeDev";s:6:"access";s:2:"10"; ... }
+s -> string
+7 -> length
 
-## Tests
+## Features
+
 	* Helpers
-		* white
-		* word
-		* number
+		* `utf8()`
 
 ## Bugs
