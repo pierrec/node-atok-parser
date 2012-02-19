@@ -18,14 +18,14 @@ Writing parsers is quite a common but sometimes lengthy task. To ease this proce
 	* atok (tokenizer)
 	* self (this)
 * Provide helpers that simplify parsing rules
-	* whitespace
-	* number
-	* float
-	* word
-	* string
-	* utf8
-	* chunk
-	* stringList
+	* `whitespace()`
+	* `number()`
+	* `float()`
+	* `word()`
+	* `string()`
+	* `utf8()`
+	* `chunk()`
+	* `stringList()`
 
 ## Download
 
@@ -67,29 +67,29 @@ Arguments are not required.
 
 * `whitespace(handler)`: process spaces, tabs, line breaks. Ignored by default, unless a handler is specified
 * `number(delimiters, handler)`: process positive integers. 
-	* delimiters: array of characters ending the number
+	* _delimiters_: array of characters ending the number
 	* `handler(num)`
 * `float(delimiters, handler)`: process float numbers.
-	* delimiters: array of characters ending the float number
+	* _delimiters_: array of characters ending the float number
 	* `handler(floatNumber)`
 * `word(delimiters, handler)`: process a word containing letters, digits and underscore. 
-	* delimiters: array of characters ending the float number
+	* _delimiters_: array of characters ending the float number
 	* `handler(word)`
 * `string(start, end, handler)`: process a delimited string.
-	* start: starting character
-	* end: ending character
+	* _start_: starting character
+	* _end_: ending character
 	* `handler(string)`
-* `utf8()`: process a delimited string containing UTF-8 encoded characters
-	* start: starting character
-	* end: ending character
+* `utf8(start, end, handler)`: process a delimited string containing UTF-8 encoded characters
+	* _start_: starting character
+	* _end_: ending character
 	* `handler(UTF-8String)`
-* `chunk()`: 
-	* charSet: object defining the charsets to be used as matching characters e.g. { start: 'aA', end 'zZ' } matches all letters
+* `chunk(charSet, handler)`: 
+	* _charSet_: object defining the charsets to be used as matching characters e.g. { start: 'aA', end 'zZ' } matches all letters
 	* `handler(chunk)`
 * `stringList()`: process a delimited list of strings
-	* start: starting character
-	* end: ending character
-	* separator: separator character
+	* _start_: starting character
+	* _end_: ending character
+	* _separator_: separator character
 	* `handler(listOfStrings)`
 
 ## Examples
