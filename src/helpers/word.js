@@ -7,8 +7,8 @@
  *
  * *important* word() will always continue(0) at the end to avoid infinite loops
 **/
-module.exports.word = function () {
-	var args = this._helper_setDelimiterArguments(arguments, 'word')
+module.exports.word = function (/* delimiters, handler */) {
+	var args = this._helper_setArguments([null], arguments, 'word')
 
 	return this
 		.saveProps('word')

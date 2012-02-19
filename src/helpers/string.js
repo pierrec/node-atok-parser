@@ -2,7 +2,12 @@
 // start: starting string delimiter - if integer, === string length
 // end: ending string delimiter. If not set, end = start
 module.exports.string = function (/* start, end, handler */) {
-	var args = this._helper_setStartEndArguments(arguments, 'string')
+	var args = this._helper_setArguments(['"', '"'], arguments, 'string')
+
+	// Special case: if end is not set, use the start value
+	var last = arguments[arguments.length-1]
+	if (arguments.length < 3 && (!last || typeof last === 'function'))
+		args[1] = args[0]
 	
 	this
 		.saveProps('string')

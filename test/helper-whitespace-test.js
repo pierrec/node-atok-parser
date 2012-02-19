@@ -8,7 +8,7 @@ var options = {}
 
 describe('Parser Helpers', function () {
   describe('helpers.whitespace()', function () {
-    var Parser = atokParser.createParser('./whitespaceHelperParser.js', 'options')
+    var Parser = atokParser.createParser('./parsers/whitespaceHelperParser.js', 'options')
     // Make sure we can count the whitespaces
     var p = new Parser({ ws: 'whitespace' })
 

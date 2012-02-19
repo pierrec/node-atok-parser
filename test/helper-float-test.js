@@ -9,7 +9,7 @@ var options = {}
 describe('Parser Helpers', function () {
   describe('helpers.float()', function () {
     describe('with a full float as a positive integer', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -31,7 +31,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a full float as a negative integer', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -53,7 +53,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a full float as a positive float', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -75,7 +75,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a full float as a negative float', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -97,7 +97,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a full float as a positive float with exponent', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -119,7 +119,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a full float as a negative float with exponent', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -141,7 +141,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with an integer with exponent', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -163,7 +163,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a negative integer with exponent', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -185,7 +185,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a float with a negative exponent', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -207,7 +207,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a float with a positive exponent', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -229,7 +229,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up float', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -253,7 +253,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up float 2', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -277,7 +277,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up float 3', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -303,7 +303,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up float 4', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -329,7 +329,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up float 5', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -355,7 +355,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a non ending number', function () {
-      var Parser = atokParser.createParser('./floatHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
       
       it('should not parse it', function (done) {

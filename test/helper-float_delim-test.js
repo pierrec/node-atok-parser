@@ -9,7 +9,7 @@ var options = {}
 describe('Parser Helpers', function () {
   describe('helpers.float()', function () {
     describe('with a full float as a positive integer', function () {
-      var Parser = atokParser.createParser('./floatDelimHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/floatDelimHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {

@@ -1,7 +1,7 @@
 // positive integers
 var numberStart = { start: '0', end: '9' }
-module.exports.number = function () {
-	var args = this._helper_setDelimiterArguments(arguments, 'number')
+module.exports.number = function (/* delimiters, handler */) {
+	var args = this._helper_setArguments([null], arguments, 'number')
 	var delimiters = args[0], handler = args[1]
 
 	function done (data) {

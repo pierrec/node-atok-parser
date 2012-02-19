@@ -9,7 +9,7 @@ var options = {}
 describe('Parser Helpers', function () {
   describe('helpers.number()', function () {
     describe('with a full number', function () {
-      var Parser = atokParser.createParser('./numberHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/numberHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -31,7 +31,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up number', function () {
-      var Parser = atokParser.createParser('./numberHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/numberHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -55,7 +55,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a non ending number', function () {
-      var Parser = atokParser.createParser('./numberHelperParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/numberHelperParser.js', 'options')
       var p = new Parser(options)
       
       it('should not parse it', function (done) {

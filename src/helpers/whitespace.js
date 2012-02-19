@@ -1,6 +1,6 @@
 // Spaces, tabs, line breaks
 // Ignore by default, unless a handler is specified
-module.exports.whitespace = function (handler) {
+module.exports.whitespace = function (/* handler */) {
 	return this
 		.saveProps('whitespace')
 		.ignore( arguments.length === 0 || !handler )

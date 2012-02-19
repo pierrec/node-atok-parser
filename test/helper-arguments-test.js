@@ -13,7 +13,7 @@ describe('Parser Helpers Argument Setting', function () {
     function handler () {}
 
     function test () {
-      return Helpers._helper_setDelimiterArguments(arguments, 'test')
+      return Helpers._helper_setArguments([null], arguments, 'test')
     }
 
     describe('with no argument', function () {
@@ -72,7 +72,7 @@ describe('Parser Helpers Argument Setting', function () {
     function handler () {}
 
     function test () {
-      return Helpers._helper_setStartEndArguments(arguments, 'test')
+      return Helpers._helper_setArguments(['"', '"'], arguments, 'test')
     }
 
     describe('with no argument', function () {
@@ -82,19 +82,6 @@ describe('Parser Helpers Argument Setting', function () {
         assert.equal(args.length, 3)
         assert.deepEqual(args[0], defaultDelim)
         assert.deepEqual(args[1], defaultDelim)
-        assert.equal(typeof args[2], 'function')
-
-        done()
-      })
-    })
-
-    describe('with start argument', function () {
-      it('should set start, end and handler', function (done) {
-        var args = test(start)
-
-        assert.equal(args.length, 3)
-        assert.deepEqual(args[0], start)
-        assert.deepEqual(args[1], start)
         assert.equal(typeof args[2], 'function')
 
         done()

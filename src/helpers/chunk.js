@@ -1,5 +1,5 @@
 // List of characters members of charSet (mandatory argument)
-module.exports.chunk = function (charSet, handler) {
+module.exports.chunk = function (/* charSet, handler */) {
 	if (arguments.length === 0)
 		throw new Error('chunk(): charSet required')
 	

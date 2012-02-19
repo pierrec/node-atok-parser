@@ -63,6 +63,7 @@ exports.createParser = function (file, parserOptions, atokOptions, parserModule)
   , 'this.writable = true'
   , 'var self = this'
   , 'var atok = new Atok(' + (atokOptions ? JSON.stringify(atokOptions): '') + ')'
+  , 'atok.on("drain", function () { self.emit("drain") })'
   , 'atok.helpersCache = {}'
   , 'this.atok = atok'
   , 'this.atokTracker = new Tracker(atok)'

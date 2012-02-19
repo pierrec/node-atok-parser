@@ -42,7 +42,7 @@ utf8Atok
   .saveRuleSet('expectEscape')
 
 module.exports.utf8 = function (/* start, end, handler */) {
-  var args = this._helper_setStartEndArguments(arguments, 'utf8')
+  var args = this._helper_setArguments(['"', '"'], arguments, 'utf8')
   var handler = args[2]
 
   function _handler (data) {

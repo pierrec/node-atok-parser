@@ -9,7 +9,7 @@ var options = {}
 describe('Parser', function () {
   describe('a new Parser', function () {
     it('should initialize with no arguments', function (done) {
-      var Parser = atokParser.createParser('./dummyParser.js')
+      var Parser = atokParser.createParser('./parsers/dummyParser.js')
       var p = new Parser
 
       assert.equal(typeof p.atok, 'object')
@@ -19,7 +19,7 @@ describe('Parser', function () {
 
   describe('a new Parser', function () {
     it('should initialize with arguments', function (done) {
-      var Parser = atokParser.createParser('./dummyParser.js', 'options')
+      var Parser = atokParser.createParser('./parsers/dummyParser.js', 'options')
       var p = new Parser
 
       assert.equal(typeof p.atok, 'object')
@@ -28,7 +28,7 @@ describe('Parser', function () {
   })
   
   describe('a new Parser', function () {
-    var Parser = atokParser.createParser('./dummyParser.js', 'options')
+    var Parser = atokParser.createParser('./parsers/dummyParser.js', 'options')
     var p = new Parser(options)
 
     it('should parse the input data', function (done) {

@@ -8,7 +8,7 @@ var options = {}
 
 describe('Parser', function () {
   describe('a new Parser sets the error positioning', function () {
-    var Parser = atokParser.createParser('./dummyParser.js', 'options')
+    var Parser = atokParser.createParser('./parsers/dummyParser.js', 'options')
 
     describe('with no token supplied, at 1,1', function () {
       var p = new Parser(options).track(true)
@@ -112,7 +112,7 @@ describe('Parser', function () {
   })
 
   describe('a new Parser sets the error positioning with multiple writes', function () {
-    var Parser = atokParser.createParser('./dummyParser.js', 'options')
+    var Parser = atokParser.createParser('./parsers/dummyParser.js', 'options')
 
     describe('with a token supplied at 2,1', function () {
       var p = new Parser(options).track(true)

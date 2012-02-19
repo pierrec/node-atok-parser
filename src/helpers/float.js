@@ -1,6 +1,6 @@
 // float numbers
-module.exports.float = function (delimiters, handler) {
-	var args = this._helper_setDelimiterArguments(arguments, 'float')
+module.exports.float = function (/* delimiters, handler */) {
+	var args = this._helper_setArguments([null], arguments, 'float')
 	var delimiters = args[0], handler = args[1]
 
 	var atok = this

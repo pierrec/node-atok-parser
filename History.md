@@ -1,3 +1,9 @@
+0.0.4 / 2012-02-19
+==================
+
+	* `stringList()` helper added
+	* [drain] tokenizer event automatically emitted by the parsers
+
 0.0.3 / 2012-02-16
 ==================
 

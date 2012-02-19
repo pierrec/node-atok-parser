@@ -7,7 +7,7 @@ var atokParser = require('..')
 var options = {}
 
 describe('helpers.string()', function () {
-  var Parser = atokParser.createParser('./stringHelperParser.js', 'options')
+  var Parser = atokParser.createParser('./parsers/stringHelperParser.js', 'options')
 
   describe('with a full string', function () {
     var p = new Parser()
