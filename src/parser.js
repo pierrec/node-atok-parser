@@ -5,7 +5,8 @@ var vm = require('vm')
 
 var inherits = require('inherits')
 var requireLike = require('require-like')
-var Atok = require('atok')
+// var Atok = require('atok')
+var Atok = require('../../node-atok')
 var Helpers = require('./helpers')
 var Tracker = require('./tracker')
 
@@ -48,8 +49,11 @@ exports.Helpers = Helpers
  * - pause
  * - resume
  * - track
+ * Events automatically forwarded from tokenizer to parser:
+ * - drain
+ * - debug
 **/
-exports.createParser = function (file, parserOptions, atokOptions, parserModule) {
+exports.createParser = function (file, parserOptions, atokOptions) {
   var filename = file.slice(-3) === '.js' ? file : file + '.js'
   filename = path.resolve( path.dirname(module.parent.filename), filename )
 
@@ -64,6 +68,7 @@ exports.createParser = function (file, parserOptions, atokOptions, parserModule)
   , 'var self = this'
   , 'var atok = new Atok(' + (atokOptions ? JSON.stringify(atokOptions): '') + ')'
   , 'atok.on("drain", function () { self.emit("drain") })'
+  , 'atok.on("debug", function (msg) { self.emit("debug", msg) })'
   , 'atok.helpersCache = {}'
   , 'this.atok = atok'
   , 'this.atokTracker = new Tracker(atok)'

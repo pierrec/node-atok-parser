@@ -3,14 +3,10 @@ module.exports.chunk = function (/* charSet, handler */) {
 	if (arguments.length === 0)
 		throw new Error('chunk(): charSet required')
 	
-	var atok = this
-	if (arguments.length === 1)
-		handler = atok.handler || function (token, idx) {
-			atok.emit('data', token, idx, 'chunk')
-		}
+	var args = this._helper_setArguments([null], arguments, 'chunk')
 
-	return atok
+	return this
 		.saveProps('chunk')
-		._helper_word(null, handler, charSet)
+		._helper_word(null, args[1], args[0])
 		.loadProps('chunk')
 }

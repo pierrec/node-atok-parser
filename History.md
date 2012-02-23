@@ -1,3 +1,9 @@
+0.0.5 / 2012-02-23
+==================
+
+	* `chunk()` fix
+	* [debug] tokenizer event automatically emitted by the parsers
+
 0.0.4 / 2012-02-19
 ==================
 

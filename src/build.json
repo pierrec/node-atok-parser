@@ -5,7 +5,7 @@
 		, "exclude": "*.json"
 		}
 	,	"output": {
-			"path": "../lib_"
+			"path": "../lib"
 		, "mode": "0644"
 		, "clean": true
 		}

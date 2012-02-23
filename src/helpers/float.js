@@ -78,6 +78,6 @@ module.exports.float = function (/* delimiters, handler */) {
 			// Done!
 			.loadProps('float')
 			.addRule(checkDone, done)
-	
+
 	return atok
 }
