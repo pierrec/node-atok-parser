@@ -3,6 +3,7 @@ var path = require('path')
 var Stream = require('stream').Stream
 var vm = require('vm')
 
+var EV = require('ev')
 var inherits = require('inherits')
 var requireLike = require('require-like')
 var Atok = require('atok')
@@ -32,9 +33,10 @@ merge(Atok.prototype, Helpers)
 exports.Helpers = Helpers
 
 /**
- * createParser(file, parserOptions, atokOptions)
+ * createParser(file, parserOptions, parserEvents, atokOptions)
  * - file (String): file to read the parser from(.js extension is optional)
- * - parserOptions (String): list of named arguments supplied to the parser
+ * - parserOptions (String): list of the parser named events with their arguments count
+ * - parserEvents (Object): events emitted by the parser with
  * - atokOptions (Object): tokenizer options
  *
  * Return a parser class (Function) based on the input file.
@@ -52,28 +54,31 @@ exports.Helpers = Helpers
  * - drain
  * - debug
 **/
-exports.createParser = function (file, parserOptions, atokOptions) {
+exports.createParser = function (file, parserOptions, parserEvents, atokOptions) {
   var filename = file.slice(-3) === '.js' ? file : file + '.js'
   filename = path.resolve( path.dirname(module.parent.filename), filename )
+
+  // Merge the supplied events with Atok's (overwrite)
+  var _parserEvents = merge(parserEvents || {}, Atok.events)
 
   var content = []
   content.push(
     'function Parser (' + (parserOptions || '') + ') {'
   , 'if (!(this instanceof Parser)) {'
   , 'return new Parser(' + (parserOptions || '') + ') }'
-  , 'Stream.call(this)'
+  , 'EV.call(this, ' + JSON.stringify(_parserEvents) + ')'
   , 'this.readable = true'
   , 'this.writable = true'
   , 'var self = this'
   , 'var atok = new Atok(' + (atokOptions ? JSON.stringify(atokOptions): '') + ')'
-  , 'atok.on("drain", function () { self.emit("drain") })'
-  , 'atok.on("debug", function (msg) { self.emit("debug", msg) })'
+  , 'atok.on("drain", this.emit_drain)'
+  , 'atok.on("debug", this.emit_debug)'
   , 'atok.helpersCache = {}'
   , 'this.atok = atok'
   , 'this.atokTracker = new Tracker(atok)'
   , fs.readFileSync(filename).toString()
   , '}'
-  , 'inherits(Parser, Stream)'
+  , 'inherits(Parser, EV, Stream.prototype)'
   , 'exports = Parser'
   , ''
   )
@@ -89,6 +94,7 @@ exports.createParser = function (file, parserOptions, atokOptions) {
   // Custom exposed globals
   , Atok: Atok
   , Tracker: Tracker
+  , EV: EV
   , Stream: Stream
   , inherits: inherits
   }

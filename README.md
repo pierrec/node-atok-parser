@@ -61,6 +61,28 @@ var p = new Parser({ option: false })
 p.parse('some data')
 ```
 
+## Methods
+
+* `createParser(file[, parserOptions, parserEvents, atokOptions])`: return a parser class (Function) based on the input file.
+	* file (String): file to read the parser from(.js extension is optional)
+	* parserOptions (String): list of the parser named events with their arguments count
+	* parserEvents (Object): events emitted by the parser with
+	* atokOptions (Object): tokenizer options
+
+The following variables are made available to the parser js:
+	* atok {Object}: atok tokenizer instanciated with provided options. Also set as this.atok *DO NOT DELETE*
+	* self (Object): reference to _this_
+ Predefined methods:
+	* write
+	* end
+	* pause
+	* resume
+	* track
+ Events automatically forwarded from tokenizer to parser:
+	* drain
+	* debug
+
+
 ## Helpers
 
 Arguments are not required.

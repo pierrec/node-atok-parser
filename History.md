@@ -1,3 +1,10 @@
+0.1.0 / 2012-02-26
+==================
+
+	* Moved from node's EventEmitter to [ev](https://github.com/pierrec/node-ev)
+	* `createParser(file, parserOptions, atokOptions)` => `createParser(file, parserOptions, parserEvents, atokOptions)`
+	* Tracker now wraps Atok Rules test method instead of relying on the no longer existing [match] event
+
 0.0.5 / 2012-02-23
 ==================
 
