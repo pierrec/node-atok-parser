@@ -7,8 +7,7 @@ var isArray = require('util').isArray
 var EV = require('ev')
 var inherits = require('inherits')
 var requireLike = require('require-like')
-// var Atok = require('atok')
-var Atok = require('../../node-atok')
+var Atok = require('atok')
 var Helpers = require('./helpers')
 var Tracker = require('./tracker')
 
