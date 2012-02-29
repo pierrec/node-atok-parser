@@ -1,13 +1,20 @@
 // Spaces, tabs, line breaks
 // Ignore by default, unless a handler is specified
 module.exports.whitespace = function (/* handler */) {
-	var args = this._helper_setArguments([], arguments, 'whitespace')
+	var atok = this
+
+	var handler = arguments.length > 0
+		? arguments[0]
+		: function whitespaceDefaultHandler (token) {
+				atok.emit_data(token, arguments.length > 1 ? arguments[1] : -1, 'whitespace')
+			}
+
 	return this
 		.saveProps('whitespace')
 		.ignore( arguments.length === 0 )
 			.addRule(
 				[' ','\t','\n','\r']
-			, args[0]
+			, handler
 			)
 		.loadProps('whitespace')
 }

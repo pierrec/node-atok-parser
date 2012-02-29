@@ -8,7 +8,7 @@ var options = {}
 
 describe('Parser Helpers Workflow', function () {
   describe('mixin', function () {
-    var Parser = atokParser.createParser('./parsers/workflowHelperParser.js', 'options')
+    var Parser = atokParser.createParser('./parsers/sequential_workflowHelperParser.js', 'options')
     var p = new Parser()
     var number, word, string, float, match
 
@@ -42,12 +42,12 @@ describe('Parser Helpers Workflow', function () {
 
       p.on('error', done)
       p.on('data', handler)
-      p.write(' "~$" (12ab) abc 123 456.789e7 ')
-      assert.equal(string, true)
-      assert.equal(match, true)
-      assert.equal(word, true)
+      p.write(' 123\tabc\n"~$" 456.789e7 (12ab) ')
       assert.equal(number, true)
+      assert.equal(word, true)
+      assert.equal(string, true)
       assert.equal(float, true)
+      assert.equal(match, true)
       done()
     })
   })

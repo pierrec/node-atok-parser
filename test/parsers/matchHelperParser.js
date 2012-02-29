@@ -1,16 +1,5 @@
 atok
-	.whitespace()
 	.match('(', ')')
-	.string()
-	.continue(0)
-	// .whitespace()
-	.word()
-	.whitespace()
-	.number()
-	.whitespace()
-	.float()
-	// .continue(-7)
-	.noop()
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)
 	})

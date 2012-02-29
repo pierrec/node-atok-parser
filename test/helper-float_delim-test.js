@@ -1,5 +1,5 @@
 /*
- * Parser Helpers tests
+ * Float Helper with delimiter tests
 **/
 var assert = require('assert')
 

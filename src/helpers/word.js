@@ -10,8 +10,5 @@
 module.exports.word = function (/* delimiters, handler */) {
 	var args = this._helper_setArguments([null], arguments, 'word')
 
-	return this
-		.saveProps('word')
-		._helper_word(args[0], args[1], { start: 'aA0_', end: 'zZ9_' })
-		.loadProps('word')
+	return this._helper_word(args[0], args[1], { start: 'aA0_', end: 'zZ9_' })
 }

@@ -1,3 +1,16 @@
+0.1.1 / 2012-02-29
+==================
+
+	* Helpers refactoring
+	* Default behaviour applied to all helpers
+	* New helpers
+		* `noop()`
+		* `match(start, end, stringQuotes[], handler)`
+	* New method
+		* `createParserFromContent(data, parserOptions, parserEvents, atokOptions)`
+	* Added `version` property
+	* Fix [drain] and [debug] events not being properly propagated
+
 0.1.0 / 2012-02-26
 ==================
 

@@ -4,30 +4,10 @@ module.exports.number = function (/* delimiters, handler */) {
 	var args = this._helper_setArguments([null], arguments, 'number')
 	var delimiters = args[0], handler = args[1]
 
-	function done (data) {
-		handler(Number(data), -1, null)
-	}
-
-	function doneDelim (token, idx, type) {
+	function done (token, idx, type) {
 		var num = Number(token)
 		handler( isFinite(num) ? num : token, idx, type )
 	}
 
-	this
-		.saveProps('number')
-		.trimLeft()
-
-	if (delimiters)
-		// Delimiters known, use this as it is much faster
-		this
-			.addRule(
-				numberStart
-			, delimiters.length > 1 ? { firstOf: delimiters } : delimiters[0]
-			, doneDelim
-			)
-	else
-		this
-			._helper_word(null, done, numberStart)
-	
-	return this.loadProps('number')
+	return this._helper_word(delimiters, done, numberStart)
 }

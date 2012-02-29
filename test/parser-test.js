@@ -7,6 +7,11 @@ var atokParser = require('..')
 var options = {}
 
 describe('Parser', function () {
+  it('should provide its version', function (done) {
+    assert.equal(typeof atokParser.version, 'string')
+    done()
+  })
+
   describe('a new Parser', function () {
     it('should initialize with no arguments', function (done) {
       var Parser = atokParser.createParser('./parsers/dummyParser.js')
@@ -27,6 +32,21 @@ describe('Parser', function () {
     })
   })
   
+  describe('a new Parser', function () {
+    var Parser = atokParser.createParser('./parsers/dummyParser.js', 'options')
+    var p = new Parser(options)
+    
+    it('should have default methods', function (done) {
+      assert.equal(typeof p.pause, 'function')
+      assert.equal(typeof p.resume, 'function')
+      assert.equal(typeof p.write, 'function')
+      assert.equal(typeof p.end, 'function')
+      assert.equal(typeof p.track, 'function')
+      assert.equal(typeof p.trackError, 'function')
+      done()
+    })
+  })
+
   describe('a new Parser', function () {
     var Parser = atokParser.createParser('./parsers/dummyParser.js', 'options')
     var p = new Parser(options)

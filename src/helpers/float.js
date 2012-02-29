@@ -6,78 +6,78 @@ module.exports.float = function (/* delimiters, handler */) {
 	var atok = this
 
 	var current = atok.helpersCache.float || ''
-	function _true () {
-		return 0
-	}
-	function acc (data) {
+
+	function floatAcc (data) {
 		current += data
 	}
-	function done () {
+	function floatDone () {
+		atok.seek(-1) // Get back by one as it was artificially added
 		handler(Number(current), -1, null)
 		atok.helpersCache.float = current = ''
 	}
-	function doneDelim (token, idx, type) {
-		acc(token)
+	function floatDoneDelim (token, idx, type) {
+		floatAcc(token)
 		var num = Number(current)
 		handler( isFinite(num) ? num : current, idx, type )
 		atok.helpersCache.float = current = ''
 	}
-	function checkDone () {
-		return current.length > 0 ? 0 : -1
+	function floatCheckDone () {
+		return current.length > 0 ? 1 : -1
 	}
 
 	atok
 		.saveProps('float')
 		.trimLeft()
-		.saveProps('_float')
 
 	if (delimiters)
 		// Delimiters known, use this as it is much faster
 		atok
-			.continue(0)
-			.addRule('-', acc)
+			.saveProps('_float')
+			.continue(0).next()
+			.addRule('-', floatAcc)
 			.loadProps('_float')
 				.addRule(
 					numberStart
 				, delimiters.length > 1 ? { firstOf: delimiters } : delimiters[0]
-				, doneDelim
+				, floatDoneDelim
 				)
 			.loadProps('float')
 	else
 		atok
-			.continue(0)
+			.continue(0).next()
 			// -123.456e7
 			// ^
-			.addRule('-', acc)
+			.addRule('-', floatAcc)
 			// -123.456e7
 			//  ^^^
-			._helper_word(null, acc, numberStart)
+			._helper_word(null, floatAcc, numberStart)
 			// -123.456e7
 			//     ^
 			.continue(1)
-			.addRule('.', acc) // Decimal!
-			.addRule(_true, _true) // No decimal, check exponent
+			.addRule('.', floatAcc) // Decimal!
+			// NB. Returning 0 makes the rule a passthrough equivalent to continue(0) 
+			.noop() // No decimal, check exponent
 			// -123.456e7
 			//      ^^^
 			.continue(0)
-			._helper_word(null, acc, numberStart)
+			._helper_word(null, floatAcc, numberStart)
 			// -123.456e7
 			//         ^
 			.continue(1)
-			.addRule(['e','E'], acc)
-			.addRule(checkDone, done) // No exponent
+			.addRule(['e','E'], floatAcc)
+			.addRule(floatCheckDone, floatDone) // No exponent
 			// -123.456e-7
 			//          ^
 			.continue(1)
-			.addRule(['-','+'], acc) // Negative or positive exponent
-			.addRule(_true, _true) // Positive exponent
+			.addRule(['-','+'], floatAcc) // Negative or positive exponent
+			.noop() // Positive exponent
 			// -123.456e-7
 			//           ^
 			.continue(0)
-			._helper_word(null, acc, numberStart)
+			._helper_word(null, floatAcc, numberStart)
 			// Done!
 			.loadProps('float')
-			.addRule(checkDone, done)
+			.addRule(floatCheckDone, floatDone)
 
 	return atok
 }

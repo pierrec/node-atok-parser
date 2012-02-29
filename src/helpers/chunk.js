@@ -5,8 +5,5 @@ module.exports.chunk = function (/* charSet, handler */) {
 	
 	var args = this._helper_setArguments([null], arguments, 'chunk')
 
-	return this
-		.saveProps('chunk')
-		._helper_word(null, args[1], args[0])
-		.loadProps('chunk')
+	return this._helper_word(null, args[1], args[0])
 }
