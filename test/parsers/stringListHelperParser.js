@@ -1,7 +1,7 @@
 atok
-	.stringList()
+	.stringList('')
 	.addRule('', function (data) {
-		atok.emit('error', new Error('Invalid string list'), data)
+		atok.emit('error', new Error('Invalid string list: ##' + data + '##'))
 	})
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)

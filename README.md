@@ -14,6 +14,7 @@ Writing parsers is quite a common but sometimes lengthy task. To ease this proce
 	* `resume()`
 * Proxy basic [node.js](http://nodejs.org) streaming events (note that [data] and [end] are __not__ automatically proxied)
 	* [drain]
+	* [debug]
 * Provide preset variables within the parser constructor
 	* atok (atok tokenizer instance)
 	* self (this)
@@ -86,6 +87,7 @@ The following variables are made available to the parser javascript code:
 	* `track()`
  Events automatically forwarded from tokenizer to parser:
 	* `drain`
+	* `debug`
 
 
 ## Helpers
@@ -131,6 +133,7 @@ Arguments are not required. If no handler is specified, the [data] will be emitt
 	* _stringQuotes_ (_Array_): array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
 	* `handler(token)`
 * `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
+
 
 ## Examples
 

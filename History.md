@@ -1,3 +1,11 @@
+0.1.2 / 2012-03-16
+==================
+
+	* Use the `eval` module to create the Parser constructor
+	* Helper `utf8()` behaves like the `string()` one
+	* Fixed typo where debug event would not be forwarded properly
+	* Helper `stringList()` behaves properly with malformed lists
+
 0.1.1 / 2012-02-29
 ==================
 

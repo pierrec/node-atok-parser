@@ -1,5 +1,4 @@
 // match a pattern bypassing strings (double or single quote, or both)
-// NB: as of this version, escaped patterns are not checked
 module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	var args = this._helper_setArguments([null,null,['"',"'"]], arguments, 'match')
 	var start = args[0]

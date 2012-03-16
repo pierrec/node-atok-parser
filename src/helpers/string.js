@@ -11,7 +11,7 @@ module.exports.string = function (/* start, end, handler */) {
 	
 	this
 		.saveProps('string')
-	
+
 	if (typeof args[0] === 'number')
 		this
 			.quiet()
