@@ -26,15 +26,12 @@ describe('Parser Helpers Default Behaviour', function () {
     , "atok.addRule('abc', 'test')"
     , "atok.saveRuleSet('test')"
     , "atok.loadRuleSet('main')"
-    , "atok.debug(true)"
-    , "atok.on('debug',console.log)"
     ]
 
   var p, err, found
 
   function getHandler (expectedType, done) {
     return function (token, idx, type) {
-      console.log(arguments)
       switch (type) {
         case expectedType:
           found = true
@@ -57,27 +54,27 @@ describe('Parser Helpers Default Behaviour', function () {
     found = false
   }
 
-  false&&describe('chunk', function () {
+  describe('chunk', function () {
     var data = [].concat(
       "atok.chunk({ start: 'a~$', end: 'z~$'})"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'chunk', done)
         p.write('abc ')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'chunk', done)
         p.write('abc ')
@@ -87,27 +84,27 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('float', function () {
+  describe('float', function () {
     var data = [].concat(
       "atok.float()"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'float', done)
         p.write('123.456 ')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'float', done)
         p.write('123.456 ')
@@ -117,27 +114,27 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('match', function () {
+  describe('match', function () {
     var data = [].concat(
       "atok.match('(', ')')"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'match', done)
         p.write('(123.456)')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'match', done)
         p.write('(123.456)')
@@ -147,27 +144,27 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('number', function () {
+  describe('number', function () {
     var data = [].concat(
       "atok.number()"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'number', done)
         p.write('123 ')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'number', done)
         p.write('123 ')
@@ -177,27 +174,27 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('string', function () {
+  describe('string', function () {
     var data = [].concat(
       "atok.string()"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'string', done)
         p.write('"abc" ')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'string', done)
         p.write('"abc" ')
@@ -213,7 +210,7 @@ describe('Parser Helpers Default Behaviour', function () {
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
@@ -227,7 +224,7 @@ describe('Parser Helpers Default Behaviour', function () {
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'stringList', done)
         p.write('("abc")')
@@ -237,27 +234,27 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('utf8', function () {
+  describe('utf8', function () {
     var data = [].concat(
       "atok.utf8()"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'utf8', done)
         p.write('"a\u00c1bc" ')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'utf8', done)
         p.write('"a\u00c1bc" ')
@@ -267,13 +264,13 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('whitespace', function () {
+  describe('whitespace', function () {
     var data = [].concat(
       "atok.whitespace()"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
@@ -281,27 +278,27 @@ describe('Parser Helpers Default Behaviour', function () {
     })
   })
 
-  false&&describe('word', function () {
+  describe('word', function () {
     var data = [].concat(
       "atok.word()"
     , defaultData
     )
 
-    false&&describe('if no match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match', done)
         p.write('<')
       })
     })
 
-    false&&describe('if match', function () {
+    describe('if match', function () {
       it('should call the handler', function (done) {
         init(data, 'word', done)
         p.write('abc ')
       })
     })
 
-    false&&describe('if match and #next() used', function () {
+    describe('if match and #next() used', function () {
       it('should call the handler and set the next rule set', function (done) {
         init(["atok.next('test')"].concat(data), 'word', done)
         p.write('abc ')

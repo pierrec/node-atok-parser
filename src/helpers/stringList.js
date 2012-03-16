@@ -10,7 +10,6 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 	var list = null
 
 	function stringListAcc (token) {
-		console.log('ACC', token)
 		list.push(token)
 	}
 	function stringListCheckDone (s, start) {
@@ -30,7 +29,7 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 
 		// Check the start of the list
 		.continue(1)
-			.addRule(args[0], function stringListInit () { list = []; console.log('INIT', args) })
+			.addRule(args[0], function stringListInit () { list = [] })
 		// Start of list not found, go at the end
 		.continue(7)
 			.noop()
