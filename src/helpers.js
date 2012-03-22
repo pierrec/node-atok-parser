@@ -85,5 +85,7 @@ module.exports._helper_word = function (delimiters, handler, wordStart) {
 
 	return atok
 }
+// Expose the rule real size
+module.exports._helper_word_length = 3
 
 //include("helpers/*.js")

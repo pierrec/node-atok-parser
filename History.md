@@ -1,3 +1,9 @@
+0.1.3 / 2012-03-22
+==================
+
+	* New properties giving helpers number of rules: `<helper>_length`
+	* `float()` fix
+
 0.1.2 / 2012-03-16
 ==================
 

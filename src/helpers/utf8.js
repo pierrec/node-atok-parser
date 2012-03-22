@@ -63,3 +63,4 @@ module.exports.utf8 = function (/* start, end, handler */) {
 
   return this.string(args[0], args[1], utf8Handler)
 }
+module.exports.utf8_length = module.exports.string_length

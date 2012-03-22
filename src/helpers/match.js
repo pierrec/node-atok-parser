@@ -95,3 +95,4 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 		// => return 1 and seek(-1) in the handler!
 		.addRule(function () { return count === 0 ? 1 : -1 }, matchDone)
 }
+module.exports.match_length = 11

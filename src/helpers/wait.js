@@ -14,3 +14,4 @@ module.exports.wait = function (pattern) {
 				.addRule(pattern, wait)
 		.loadProps('wait')
 }
+module.exports.wait_length = 1

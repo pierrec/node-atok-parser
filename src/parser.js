@@ -8,7 +8,6 @@ var EV = require('ev')
 var inherits = require('inherits')
 var _eval = require('eval')
 var Atok = require('atok')
-// var Atok = require('../../node-atok')
 var Helpers = require('./helpers')
 var Tracker = require('./tracker')
 

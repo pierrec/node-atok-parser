@@ -62,3 +62,4 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 		.loadProps('stringList')
 			.addRule(stringListCheckDone, stringListDone)
 }
+module.exports.stringList_length = '5 + noop_length + 2 * whitespace_length + 2 * wait_length'

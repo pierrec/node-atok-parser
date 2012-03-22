@@ -8,3 +8,4 @@ module.exports.noop = function () {
 				.addRule(_true, 'noop')
 		.loadProps('noop')
 }
+module.exports.noop_length = 1

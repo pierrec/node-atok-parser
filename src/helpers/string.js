@@ -23,3 +23,4 @@ module.exports.string = function (/* start, end, handler */) {
 
 	return this.loadProps('string')
 }
+module.exports.string_length = 1

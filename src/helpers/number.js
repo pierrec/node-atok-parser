@@ -11,3 +11,4 @@ module.exports.number = function (/* delimiters, handler */) {
 
 	return this._helper_word(delimiters, done, numberStart)
 }
+module.exports.number_length = module.exports._helper_word_length

@@ -65,15 +65,14 @@ module.exports.float = function (/* delimiters, handler */) {
 			//         ^
 			.continue(1)
 			.addRule(['e','E'], floatAcc)
-			.addRule(floatCheckDone, floatDone) // No exponent
+			.continue( 1 + atok._helper_word_length )
+			.noop() // No exponent
 			// -123.456e-7
 			//          ^
-			.continue(1)
+			.continue(0)
 			.addRule(['-','+'], floatAcc) // Negative or positive exponent
-			.noop() // Positive exponent
 			// -123.456e-7
 			//           ^
-			.continue(0)
 			._helper_word(null, floatAcc, numberStart)
 			// Done!
 			.loadProps('float')
@@ -81,3 +80,4 @@ module.exports.float = function (/* delimiters, handler */) {
 
 	return atok
 }
+module.exports.float_length = '5 + 2 * noop_length + 3 * _helper_word_length'

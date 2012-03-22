@@ -18,3 +18,4 @@ module.exports.whitespace = function (/* handler */) {
 			)
 		.loadProps('whitespace')
 }
+module.exports.whitespace_length = 1
