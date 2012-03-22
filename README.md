@@ -12,7 +12,7 @@ Writing parsers is quite a common but sometimes lengthy task. To ease this proce
 	* `end()`
 	* `pause()`
 	* `resume()`
-* Proxy basic [node.js](http://nodejs.org) streaming events (note that [data] and [end] are __not__ automatically proxied)
+* Proxy basic [node.js](http://nodejs.org) streaming events (note that [data] and [end] are __not__ automatically proxied) and some of atok
 	* [drain]
 	* [debug]
 * Provide preset variables within the parser constructor
@@ -29,6 +29,7 @@ Writing parsers is quite a common but sometimes lengthy task. To ease this proce
 	* `stringList()`
 	* `match()`
 	* `noop()`
+	* `wait()`
 
 
 ## Download
@@ -133,6 +134,7 @@ Arguments are not required. If no handler is specified, the [data] will be emitt
 	* _stringQuotes_ (_Array_): array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
 	* `handler(token)`
 * `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
+* `wait(atokPattern)`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
 
 
 ## Examples
