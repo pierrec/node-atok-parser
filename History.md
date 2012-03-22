@@ -3,6 +3,7 @@
 
 	* New properties giving helpers number of rules: `<helper>_length`
 	* `float()` fix
+	* Added the `wait()` helper
 
 0.1.2 / 2012-03-16
 ==================
