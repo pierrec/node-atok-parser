@@ -7,18 +7,14 @@ Writing parsers is quite a common but sometimes lengthy task. To ease this proce
 * Automatically instantiate a tokenizer with provided options
 * Provide a mechanism to locate an error in the input data
 	* `track([Boolean])`: keep track of the line and column positions to be used when building errors. Note that when set, tracking incurs a performance penalty.
-* Proxy basic [node.js](http://nodejs.org) streaming methods
-	* `write()`
-	* `end()`
-	* `pause()`
-	* `resume()`
+* Proxy basic [node.js](http://nodejs.org) streaming methods: `write()`, `end()`, `pause()` and `resume()`
 * Proxy basic [node.js](http://nodejs.org) streaming events (note that [data] and [end] are __not__ automatically proxied) and some of atok
 	* [drain]
 	* [debug]
 * Provide preset variables within the parser constructor
 	* atok (atok tokenizer instance)
 	* self (this)
-* Provide helpers that simplify parsing rules
+* Provide helpers that simplify parsing rules (see below for description)
 	* `whitespace()`
 	* `number()`
 	* `float()`
@@ -48,16 +44,16 @@ var Parser = atokParser.createParser('./myParser', 'options')
 
 // Add the #parse() method to the Parser
 Parser.prototype.parse = function (data) {
-  var res
+	var res
 
 	this.sync = true
-  this.write(data)
+	this.write(data)
 	res = this.current
 
 	this.current = null
 	this.sync = false
 
-  return res
+	return res
 }
 
 // Instantiate a parser
@@ -90,6 +86,8 @@ The following variables are made available to the parser javascript code:
 	* `drain`
 	* `debug`
 
+* `createParserFromContent(data[, parserOptions, parserEvents, atokOptions])`: same as `createParser()` but with supplied content instead of a file name
+	* __data__ (_String_ | _Array_): the content to be used, can be an array of strings
 
 ## Helpers
 
