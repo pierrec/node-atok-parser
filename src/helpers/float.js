@@ -27,7 +27,7 @@ module.exports.float = function (/* handler */) {
 		atok.offsetBuffer = -1
 	}
 	function floatEnd () {
-		if (atok.offsetBuffer >= 0) floatDone(0)
+		floatDone(0)
 	}
 
 	atok
