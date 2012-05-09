@@ -5,7 +5,7 @@
 	* Changed (for convenience as Parser are more likely to be created from content):
 		* `createParserFromContent()` renamed `createParser()`
 		* `createParser()` renamed `createParserFromFile()`
-	* `createParser()` accepts a function as content and uses the functino parameters
+	* `createParser()` accepts a function as content and uses the function parameters
 	* Performance improvements on most helpers via `acc()` functions removal and use of `continue(success, failure)`
 	* Examples refactoring
 

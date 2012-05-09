@@ -29,7 +29,7 @@ describe('Parser Helpers Default Behaviour', function () {
     , "atok.loadRuleSet('main')"
     ]
 
-  var p, err, found, dataFound
+  var p, err, found, dataFound, args
 
   function getHandler (expectedType) {
     return function (token, idx, type) {
@@ -37,6 +37,7 @@ describe('Parser Helpers Default Behaviour', function () {
         case expectedType:
           found = true
           dataFound = token
+          args = arguments
         break
         case 'no-match':
         case 'test':
@@ -57,7 +58,7 @@ describe('Parser Helpers Default Behaviour', function () {
     dataFound = null
   }
 
-  function testHelper (helper, helperRule, helperData, expectedData) {
+  function testHelper (helper, helperRule, helperData, expectedData, expectedDataType) {
     describe( '[' + helper + ']:', function () {
       var data = [].concat(
         helperRule
@@ -78,10 +79,26 @@ describe('Parser Helpers Default Behaviour', function () {
           init(data, helper)
           p.atok.removeRule('no-match')
           p.write(helperData)
+          p.write(' ')
           assert(found)
           assert.equal(p.atok.length, 1)
           assert.deepEqual(dataFound, expectedData)
-          done()
+          done(err)
+        })
+      })
+
+      describe('if match', function () {
+        it('should set the proper handler signature', function (done) {
+          init(data, helper)
+          p.atok.removeRule('no-match')
+          p.write(helperData)
+          p.write(' ')
+          assert(!!args)
+          assert.equal(args.length, 3)
+          assert.equal(typeof args[0], expectedDataType)
+          assert.equal(typeof args[1], 'number')
+          assert.equal(typeof args[2], 'string')
+          done(err)
         })
       })
 
@@ -89,9 +106,10 @@ describe('Parser Helpers Default Behaviour', function () {
         it('should call the handler and set the next rule set', function (done) {
           init(["atok.next('test')"].concat(data), helper)
           p.write(helperData)
+          p.write(' ')
           assert(found)
           assert.equal(p.atok.currentRule, 'test')
-          done()
+          done(err)
         })
       })
 
@@ -99,8 +117,9 @@ describe('Parser Helpers Default Behaviour', function () {
         it('should not call the handler', function (done) {
           init(["atok.ignore(true)"].concat(data), helper)
           p.write(helperData)
+          p.write(' ')
           assert(!found)
-          done()
+          done(err)
         })
       })
 
@@ -108,22 +127,44 @@ describe('Parser Helpers Default Behaviour', function () {
         it('should call the handler with the matched size', function (done) {
           init(["atok.quiet(true)"].concat(data), helper)
           p.write(helperData)
+          p.write(' ')
           assert(found)
           assert.equal(typeof dataFound === 'number' ? dataFound : dataFound.length, expectedData.length)
-          done()
+          done(err)
+        })
+      })
+
+      describe('on end(data)', function () {
+        it('should call the handler with the data', function (done) {
+          init(data, helper)
+          p.end(helperData)
+          assert(found)
+          assert.deepEqual(dataFound, expectedData)
+          done(err)
+        })
+      })
+
+      describe('on write(data).end()', function () {
+        it('should call the handler with the data', function (done) {
+          init(data, helper)
+          p.write(helperData)
+          p.end()
+          assert(found)
+          assert.deepEqual(dataFound, expectedData)
+          done(err)
         })
       })
     })
   }
 
-  testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'})", 'abc ', 'abc')
-  testHelper('float', "atok.float()", '123.456 ', '123.456')
-  testHelper('match', "atok.match('(',')')", '(123.456) ', '123.456')
-  testHelper('number', "atok.number()", '123 ', '123')
-  testHelper('string', "atok.string()", '"abc" ', 'abc')
-  testHelper('stringList', "atok.stringList('(',')')", '("abc") ', ['abc'])
-  testHelper('utf8', "atok.utf8()", '"a\u00e0bc" ', 'aàbc')
-  testHelper('word', "atok.word()", 'abc ', 'abc')
+  testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'})", 'abc', 'abc', 'string')
+  testHelper('float', "atok.float()", '123.456', '123.456', 'number')
+  testHelper('match', "atok.match('(',')')", '(123.456)', '123.456', 'string')
+  testHelper('number', "atok.number()", '123', '123', 'number')
+  testHelper('string', "atok.string()", '"abc"', 'abc', 'string')
+  testHelper('stringList', "atok.stringList('(',')')", '("abc")', ['abc'], 'object')
+  testHelper('utf8', "atok.utf8()", '"a\u00e0bc"', 'aàbc', 'string')
+  testHelper('word', "atok.word()", 'abc', 'abc', 'string')
 
   describe('whitespace', function () {
     var data = [].concat(

@@ -49,25 +49,26 @@ module.exports._helper_word = function (wordStart, handler) {
 
 		atok.offsetBuffer = -1
 	}
+	function _helper_wordEnd () {
+		if (atok.offsetBuffer >= 0) _helper_wordDone(0)
+	}
 
 	return atok
 		.saveProps('_helper_word')
-
+		.once('end', _helper_wordEnd)
 		.trimLeft().next().ignore().quiet(true)
+
 			// Match / no match
-			.continue( 0, 3 )
+			.continue( 0, 2 )
 				.addRule(wordStart, _helper_wordStart)
 
 		// while(character matches a word letter)
-		.continue(-1)
-			.addRule(wordStart, 0, function _helper_wordWait () {
-				// Character matches but end of buffer reached
-				if (atok.ending)
-					_helper_wordDone()
-				// Since continue() is used, the rule index is preserved
+		.continue(-1).quiet(true)
+			.addRule(wordStart, function _helper_wordCheck () {
+				// End of buffer reached and stream ending... send the matched data
+				if (atok.ending && atok.length === atok.offset)
+					_helper_wordDone(0)
 			})
-		.continue(-2).ignore(true)
-			.addRule(wordStart, '_helper_word-skip')
 
 		.loadProps('_helper_word')
 		.quiet(true).ignore()
