@@ -23,246 +23,107 @@ describe('Parser Helpers Default Behaviour', function () {
     , emit_error.toString()
     , "atok.on('error', emit_error)"
     , "atok.saveRuleSet('main')"
+    , "atok.clearRule()"
     , "atok.addRule('abc', 'test')"
     , "atok.saveRuleSet('test')"
     , "atok.loadRuleSet('main')"
     ]
 
-  var p, err, found
+  var p, err, found, dataFound
 
-  function getHandler (expectedType, done) {
+  function getHandler (expectedType) {
     return function (token, idx, type) {
       switch (type) {
         case expectedType:
           found = true
-          done && done(err)
+          dataFound = token
         break
         case 'no-match':
+        case 'test':
         break
         default:
-          done( new Error('Unknown type: ' + type) )
+          err = new Error('Unknown type: ' + type)
       }
     }
   }
 
   function init (data, type, done) {
-    var Parser = atokParser.createParserFromContent(data, 'options')
+    var Parser = atokParser.createParser(data, 'options')
     p = new Parser(options)
     p.on('error', function (e) { err = e })
     p.on('data', getHandler(type, done))
     err = null
     found = false
+    dataFound = null
   }
 
-  describe('chunk', function () {
-    var data = [].concat(
-      "atok.chunk({ start: 'a~$', end: 'z~$'})"
-    , defaultData
-    )
+  function testHelper (helper, helperRule, helperData, expectedData) {
+    describe( '[' + helper + ']:', function () {
+      var data = [].concat(
+        helperRule
+      , defaultData
+      )
 
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
+      describe('if no match', function () {
+        it('should go to the next rule', function (done) {
+          init(data, 'no-match')
+          p.write('<')
+          assert(found)
+          done(err)
+        })
+      })
+
+      describe('if match', function () {
+        it('should call the handler', function (done) {
+          init(data, helper)
+          p.atok.removeRule('no-match')
+          p.write(helperData)
+          assert(found)
+          assert.equal(p.atok.length, 1)
+          assert.deepEqual(dataFound, expectedData)
+          done()
+        })
+      })
+
+      describe('if match and #next() used', function () {
+        it('should call the handler and set the next rule set', function (done) {
+          init(["atok.next('test')"].concat(data), helper)
+          p.write(helperData)
+          assert(found)
+          assert.equal(p.atok.currentRule, 'test')
+          done()
+        })
+      })
+
+      describe('if match and #ignore() used', function () {
+        it('should not call the handler', function (done) {
+          init(["atok.ignore(true)"].concat(data), helper)
+          p.write(helperData)
+          assert(!found)
+          done()
+        })
+      })
+
+      describe('if match and #quiet() used', function () {
+        it('should call the handler with the matched size', function (done) {
+          init(["atok.quiet(true)"].concat(data), helper)
+          p.write(helperData)
+          assert(found)
+          assert.equal(typeof dataFound === 'number' ? dataFound : dataFound.length, expectedData.length)
+          done()
+        })
       })
     })
+  }
 
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'chunk', done)
-        p.write('abc ')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'chunk', done)
-        p.write('abc ')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
-
-  describe('float', function () {
-    var data = [].concat(
-      "atok.float()"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'float', done)
-        p.write('123.456 ')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'float', done)
-        p.write('123.456 ')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
-
-  describe('match', function () {
-    var data = [].concat(
-      "atok.match('(', ')')"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'match', done)
-        p.write('(123.456)')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'match', done)
-        p.write('(123.456)')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
-
-  describe('number', function () {
-    var data = [].concat(
-      "atok.number()"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'number', done)
-        p.write('123 ')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'number', done)
-        p.write('123 ')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
-
-  describe('string', function () {
-    var data = [].concat(
-      "atok.string()"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'string', done)
-        p.write('"abc" ')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'string', done)
-        p.write('"abc" ')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
-
-  describe('stringList', function () {
-    var data = [].concat(
-      "atok.stringList('(',')')"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'stringList', done)
-        p.write('("abc")')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'stringList', done)
-        p.write('("abc")')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
-
-  describe('utf8', function () {
-    var data = [].concat(
-      "atok.utf8()"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'utf8', done)
-        p.write('"a\u00c1bc" ')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'utf8', done)
-        p.write('"a\u00c1bc" ')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
-      })
-    })
-  })
+  testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'})", 'abc ', 'abc')
+  testHelper('float', "atok.float()", '123.456 ', '123.456')
+  testHelper('match', "atok.match('(',')')", '(123.456) ', '123.456')
+  testHelper('number', "atok.number()", '123 ', '123')
+  testHelper('string', "atok.string()", '"abc" ', 'abc')
+  testHelper('stringList', "atok.stringList('(',')')", '("abc") ', ['abc'])
+  testHelper('utf8', "atok.utf8()", '"a\u00e0bc" ', 'aàbc')
+  testHelper('word', "atok.word()", 'abc ', 'abc')
 
   describe('whitespace', function () {
     var data = [].concat(
@@ -272,38 +133,9 @@ describe('Parser Helpers Default Behaviour', function () {
 
     describe('if no match', function () {
       it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
+        init(data, 'no-match')
         p.write('<')
-      })
-    })
-  })
-
-  describe('word', function () {
-    var data = [].concat(
-      "atok.word()"
-    , defaultData
-    )
-
-    describe('if no match', function () {
-      it('should go to the next rule', function (done) {
-        init(data, 'no-match', done)
-        p.write('<')
-      })
-    })
-
-    describe('if match', function () {
-      it('should call the handler', function (done) {
-        init(data, 'word', done)
-        p.write('abc ')
-      })
-    })
-
-    describe('if match and #next() used', function () {
-      it('should call the handler and set the next rule set', function (done) {
-        init(["atok.next('test')"].concat(data), 'word', done)
-        p.write('abc ')
-        assert(found)
-        assert.equal(p.atok.getRuleSet(), 'test')
+        done()
       })
     })
   })

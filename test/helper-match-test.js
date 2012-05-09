@@ -9,7 +9,7 @@ var options = {}
 describe('Parser Helpers', function () {
 
   describe('helpers.match()', function () {
-    var Parser = atokParser.createParser('./parsers/matchHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/matchHelperParser.js', 'options')
     var p, err
 
     function getHandler (expectedMatch, done) {

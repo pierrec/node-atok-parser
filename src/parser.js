@@ -1,15 +1,23 @@
+// Core modules
 var fs = require('fs')
 var path = require('path')
 var Stream = require('stream').Stream
 var vm = require('vm')
 var isArray = require('util').isArray
 
+// Modules
+var debug = require('debug')('atok-parser')
 var EV = require('ev')
 var inherits = require('inherits')
 var _eval = require('eval')
 var Atok = require('atok')
+var fnutils = require('fnutils')
+
+// Local files
 var Helpers = require('./helpers')
 var Tracker = require('./tracker')
+
+debug("atok version %s", Atok.version)
 
 function noop () {}
 
@@ -37,7 +45,7 @@ exports.Helpers = Helpers
 exports.version = require('../package.json').version
 
 /**
- * createParserFromContent(data, parserOptions, parserEvents, atokOptions)
+ * createParser(data, parserOptions, parserEvents, atokOptions)
  * - data (String | Array): parser javascript code
  * - parserOptions (String): list of the parser named events with their arguments count
  * - parserEvents (Object): events emitted by the parser with
@@ -57,7 +65,7 @@ exports.version = require('../package.json').version
  * Events automatically forwarded from tokenizer to parser:
  * - drain
 **/
-exports.createParserFromContent = function (data, parserOptions, parserEvents, atokOptions, filename) {
+exports.createParser = function (data, parserOptions, parserEvents, atokOptions, filename) {
   filename = filename || ''
   // Merge the supplied events with Atok's (overwrite)
   var _parserEvents = merge(parserEvents || {}, Atok.events)
@@ -75,12 +83,15 @@ exports.createParserFromContent = function (data, parserOptions, parserEvents, a
       + '", function (' + args + ') { self.emit_' + event + '(' + args + ') })'
   }
 
+  // Set the parser options
+  parserOptions = parserOptions || (typeof data === 'function' ? fnutils.head(data) : '')
+
   // Define the parser constructor
   var content = []
   content.push(
-    'function Parser (' + (parserOptions || '') + ') {'
+    'function Parser (' + parserOptions + ') {'
   , 'if (!(this instanceof Parser)) {'
-  , 'return new Parser(' + (parserOptions || '') + ') }'
+  , 'return new Parser(' + parserOptions + ') }'
   , 'EV.call(this, ' + JSON.stringify(_parserEvents) + ')'
   , 'this.readable = true'
   , 'this.writable = true'
@@ -88,10 +99,13 @@ exports.createParserFromContent = function (data, parserOptions, parserEvents, a
   , 'var atok = new Atok(' + (atokOptions ? JSON.stringify(atokOptions): '') + ')'
   , forwardEvent('drain')
   , forwardEvent('debug')
-  , 'atok.helpersCache = {}'
   , 'this.atok = atok'
   , 'this.atokTracker = new Tracker(atok)'
-  , isArray(data) ? data.join(';') : data
+  , isArray(data)
+      ? data.join(';')
+      : typeof data === 'function'
+          ? fnutils.body(data)
+          : data
   , '}'
   , 'inherits(Parser, EV, Stream.prototype)'
   , 'module.exports = Parser'
@@ -153,7 +167,7 @@ exports.createParserFromContent = function (data, parserOptions, parserEvents, a
 
     var tracker = this.atokTracker
 
-    var msg = 'rule: ' + atok.getRuleSet()
+    var msg = 'rule: ' + atok.currentRule
 
     if (tracker.running) {
       var margin = 4
@@ -199,7 +213,7 @@ exports.createParserFromContent = function (data, parserOptions, parserEvents, a
       line: line
     , column: column
     , token: data
-    , rule: atok.getRuleSet()
+    , rule: atok.currentRule
     })
   }
 
@@ -207,20 +221,20 @@ exports.createParserFromContent = function (data, parserOptions, parserEvents, a
 }
 
 /**
- * createParser(file, parserOptions, parserEvents, atokOptions)
+ * createParserFromFile(file, parserOptions, parserEvents, atokOptions)
  * - file (String): file to read the parser from(.js extension is optional but enforced)
  * - parserOptions (String): list of the parser named events with their arguments count
  * - parserEvents (Object): events emitted by the parser with
  * - atokOptions (Object): tokenizer options
 **/
-exports.createParser = function (file, parserOptions, parserEvents, atokOptions) {
+exports.createParserFromFile = function (file, parserOptions, parserEvents, atokOptions) {
   // Append .js extension if not set
   var filename = file.slice(-3) === '.js' ? file : file + '.js'
   // Figure out the file full path
   filename = path.resolve( path.dirname(module.parent.filename), filename )
 
   return exports
-    .createParserFromContent(
+    .createParser(
       fs.readFileSync(filename).toString()
     , parserOptions
     , parserEvents

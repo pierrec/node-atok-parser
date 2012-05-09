@@ -8,7 +8,7 @@ var options = {}
 
 describe('Parser Helpers Workflow', function () {
   describe('mixin', function () {
-    var Parser = atokParser.createParser('./parsers/workflowHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/workflowHelperParser.js', 'options')
     var p = new Parser()
     var number, word, string, float, match
 

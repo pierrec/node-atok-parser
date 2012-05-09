@@ -1,5 +1,4 @@
 var Atok = require('atok')
-// var Atok = require('../../node-atok')
 
 // Wrap a method with a given function
 // Function gets the set of arguments and result of the wrapped method

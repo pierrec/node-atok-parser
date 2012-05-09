@@ -7,7 +7,7 @@ var atokParser = require('..')
 var options = {}
 
 describe('Parser UTF-8 Helper', function () {
-  var Parser = atokParser.createParser('./parsers/utf8HelperParser.js', 'options')
+  var Parser = atokParser.createParserFromFile('./parsers/utf8HelperParser.js', 'options')
 
   describe('with non UTF-8 characters', function () {
     var p = new Parser()

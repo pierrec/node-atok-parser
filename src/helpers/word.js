@@ -7,9 +7,9 @@
  *
  * *important* word() will always continue(0) at the end to avoid infinite loops
 **/
-module.exports.word = function (/* delimiters, handler */) {
-	var args = this._helper_setArguments([null], arguments, 'word')
+module.exports.word = function (/* handler */) {
+	var args = this._helper_setArguments([], arguments, 'word')
 
-	return this._helper_word(args[0], args[1], { start: 'aA0_', end: 'zZ9_' })
+	return this._helper_word({ start: 'aA0_', end: 'zZ9_' }, args[0])
 }
 module.exports.word_length = module.exports._helper_word_length

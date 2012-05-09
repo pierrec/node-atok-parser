@@ -1,3 +1,14 @@
+0.2.0 / 2012-05-07
+==================
+
+	* Removed: delimiters support for `float()`, `number()` and `word()`
+	* Changed (for convenience as Parser are more likely to be created from content):
+		* `createParserFromContent()` renamed `createParser()`
+		* `createParser()` renamed `createParserFromFile()`
+	* `createParser()` accepts a function as content and uses the functino parameters
+	* Performance improvements on most helpers via `acc()` functions removal and use of `continue(success, failure)`
+	* Examples refactoring
+
 0.1.3 / 2012-03-22
 ==================
 

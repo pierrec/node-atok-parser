@@ -15,8 +15,13 @@ build(
 
 var path = require('path')
 var fstream = require('fstream')
+var debug = require('debug')('ekam')
 
+/**
+ * Once the files are built, eval the dependent helpers length
+ */
 function postBuildTask () {
+	debug('starting')
 	var Helpers = require( path.resolve( __dirname, '..' ) ).Helpers
 	
 	// Evaluate the helpers lengths:
@@ -33,19 +38,22 @@ function postBuildTask () {
 		})
 	var _postBuildTask_item
 
-	var v
+	var v, expr
 
+	// Work through the length expressions
 	while ( _postBuildTask_list.length ) {
 		_postBuildTask_item = _postBuildTask_list.shift()
-		// console.log(i, _postBuildTask_item)
+		debug('_postBuildTask_item', _postBuildTask_item)
 
 		// Get the expression and eval it in the context of Helpers (that way other
 		// helper lengths are accessed directly by their name)
 		with (Helpers) { // with!!!
-			v = eval( eval( _postBuildTask_item ) ) // double eval!!!
+			expr = eval( _postBuildTask_item ) // eval #1!!!
+			debug('_postBuildTask_item expression', expr)
+			v = eval( expr ) // eval #2!!!
 		}
 		if ( isFinite(v) ) {
-			// All lengths are known
+			// All lengths are known for the current helper
 			target.write( 'module.exports.' + _postBuildTask_item + ' = ' + v + '\n' )
 		} else {
 			// Still missing some lengths, add to the back of the queue
@@ -55,4 +63,5 @@ function postBuildTask () {
 	}
 
 	target.end()
+	debug('complete')
 }

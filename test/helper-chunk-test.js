@@ -9,7 +9,7 @@ var options = {}
 describe('Parser Helpers', function () {
   describe('helpers.chunk()', function () {
     describe('with a whole chunk', function () {
-      var Parser = atokParser.createParser('./parsers/chunkHelperParser.js', 'options')
+      var Parser = atokParser.createParserFromFile('./parsers/chunkHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -31,7 +31,7 @@ describe('Parser Helpers', function () {
     })
 
     describe('with a split up chunk', function () {
-      var Parser = atokParser.createParser('./parsers/chunkHelperParser.js', 'options')
+      var Parser = atokParser.createParserFromFile('./parsers/chunkHelperParser.js', 'options')
       var p = new Parser(options)
 
       it('should parse it', function (done) {
@@ -48,14 +48,13 @@ describe('Parser Helpers', function () {
         p.on('error', done)
         p.on('data', handler)
         p.write('a~bc')
-        assert.equal(p.atok.length, 0)
         p.write('a$bc ')
         done()
       })
     })
 
     describe('with a non ending chunk', function () {
-      var Parser = atokParser.createParser('./parsers/chunkHelperParser.js', 'options')
+      var Parser = atokParser.createParserFromFile('./parsers/chunkHelperParser.js', 'options')
       var p = new Parser(options)
       
       it('should not parse it', function (done) {

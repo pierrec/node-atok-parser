@@ -1,83 +1,71 @@
 // float numbers
-module.exports.float = function (/* delimiters, handler */) {
-	var args = this._helper_setArguments([null], arguments, 'float')
-	var delimiters = args[0], handler = args[1]
+module.exports.float = function (/* handler */) {
+	var args = this._helper_setArguments([], arguments, 'float')
+	var handler = args[0]
 
 	var atok = this
 
-	var current = atok.helpersCache.float || ''
+	var props = atok.getProps('quiet', 'ignore')
+	var isQuiet = props.quiet
+	var isIgnored = props.ignore
 
-	function floatAcc (data) {
-		current += data
+	function floatStart (matched) {
+		// NB. the offset has already been increased with the match size
+		atok.offsetBuffer = atok.offset - matched
 	}
-	function floatDone () {
-		atok.seek(-1) // Get back by one as it was artificially added
-		handler(Number(current), -1, null)
-		atok.helpersCache.float = current = ''
-	}
-	function floatDoneDelim (token, idx, type) {
-		floatAcc(token)
-		var num = Number(current)
-		handler( isFinite(num) ? num : current, idx, type )
-		atok.helpersCache.float = current = ''
-	}
-	function floatCheckDone () {
-		return current.length > 0 ? 1 : -1
+	function floatDone (matched) {
+		atok.seek(-matched)
+		if (!isIgnored)
+			handler(
+				isQuiet
+					? atok.offset - atok.offsetBuffer
+					: Number( atok._slice(atok.offsetBuffer, atok.offset) )
+			, -1
+			, null
+			)
+
+		atok.offsetBuffer = -1
 	}
 
 	atok
 		.saveProps('float')
 		.trimLeft()
 
-	if (delimiters)
-		// Delimiters known, use this as it is much faster
-		atok
-			.saveProps('_float')
-			.continue(0).next()
-			.addRule('-', floatAcc)
-			.loadProps('_float')
-				.addRule(
-					numberStart
-				, delimiters.length > 1 ? { firstOf: delimiters } : delimiters[0]
-				, floatDoneDelim
-				)
-			.loadProps('float')
-	else
-		atok
-			.continue(0).next()
-			// -123.456e7
-			// ^
-			.addRule('-', floatAcc)
-			// -123.456e7
-			//  ^^^
-			._helper_word(null, floatAcc, numberStart)
-			// -123.456e7
-			//     ^
-			.continue(1)
-			.addRule('.', floatAcc) // Decimal!
-			// NB. Returning 0 makes the rule a passthrough equivalent to continue(0) 
-			.noop() // No decimal, check exponent
-			// -123.456e7
-			//      ^^^
-			.continue(0)
-			._helper_word(null, floatAcc, numberStart)
-			// -123.456e7
-			//         ^
-			.continue(1)
-			.addRule(['e','E'], floatAcc)
-			.continue( 1 + atok._helper_word_length )
-			.noop() // No exponent
-			// -123.456e-7
-			//          ^
-			.continue(0)
-			.addRule(['-','+'], floatAcc) // Negative or positive exponent
-			// -123.456e-7
-			//           ^
-			._helper_word(null, floatAcc, numberStart)
-			// Done!
-			.loadProps('float')
-			.addRule(floatCheckDone, floatDone)
+		.next().quiet(true)
+		// -123.456e7
+		// ^^^^
+		.continue(0, 7) // Digit found / not found
+		.addRule({ start: '0-', end: '9-' }, floatStart)
+		.continue(-1).ignore(true)
+		.addRule(numberStart, 'float-value1')
+		// -123.456e7
+		//     ^
+		.continue(0, 1) // Decimal / No decimal, check exponent
+		.addRule('.', 'float-dot')
+		// -123.456e7
+		//      ^^^
+		.continue(-1)
+		.addRule(numberStart, 'float-value2')
+		// -123.456e7
+		//         ^
+		.continue(0, 2) // Exponent / No exponent
+		.addRule(['e','E'], 'float-exp')
+		// -123.456e-7
+		//          ^
+		.continue(0)
+		.addRule(['-','+'], 'float-exp-sign') // Negative or positive exponent
+		// -123.456e-7
+		//           ^
+		.continue(-1)
+		.addRule(numberStart, 'float-exp-value')
+		// Done!
+		.loadProps('float')
+		// Force some properties to make sure the handler is executed
+		.quiet(true).ignore()
+			.addRule(floatDone)
+		// Restore the properties
+		.quiet(isQuiet).ignore(isIgnored)
 
 	return atok
 }
-module.exports.float_length = '5 + 2 * noop_length + 3 * _helper_word_length'
+module.exports.float_length = 9

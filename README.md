@@ -40,7 +40,7 @@ It is published on node package manager (npm). To install, do:
 ``` javascript
 var atokParser = require('atok-parser')
 // myParser.js contains the rules and other relevant code
-var Parser = atokParser.createParser('./myParser', 'options')
+var Parser = atokParser.createParserFromFile('./myParser', 'options')
 
 // Add the #parse() method to the Parser
 Parser.prototype.parse = function (data) {
@@ -67,7 +67,7 @@ p.parse('some data')
 
 ## Methods
 
-* `createParser(file[, parserOptions, parserEvents, atokOptions])`: return a parser class (Function) based on the input file.
+* `createParserFromFile(file[, parserOptions, parserEvents, atokOptions])`: return a parser class (Function) based on the input file.
 	* __file__ (_String_): file to read the parser from(.js extension is optional)
 	* __parserOptions__ (_String_): list of the parser named events with their arguments count
 	* __parserEvents__ (_Object_): events emitted by the parser with
@@ -86,8 +86,9 @@ The following variables are made available to the parser javascript code:
 	* `drain`
 	* `debug`
 
-* `createParserFromContent(data[, parserOptions, parserEvents, atokOptions])`: same as `createParser()` but with supplied content instead of a file name
-	* __data__ (_String_ | _Array_): the content to be used, can be an array of strings
+* `createParser(data[, parserOptions, parserEvents, atokOptions])`: same as `createParserFromFile()` but with supplied content instead of a file name
+	* __data__ (_String_ | _Array_ | _Function_): the content to be used, can also be an array of strings or a function. If a function, its parameters are used as parser options unless parserOptions is set
+
 
 ## Helpers
 
@@ -96,19 +97,30 @@ Helpers are a set of standard Atok rules organized to match a specific type of d
 * go to the next rule if no match
 * go back to the first rule of the rule set upon match, unless `continue(jump)` was applied to the helper
 * next rule set can be set using `next(ruleSetId)`
+* rules can be jumped around by using `continue(jump)`. Note that each helper has its own size (given by the helper name + '_length') that must be used to ensure proper jumping.
+
+``` javascript
+var atokParser = require('atok-parser')
+
+// Parse a whitespace separated list of floats
+var data = [
+	'atok.float()'
+,	'atok.continue( -(atok.float_length + atok.whitespace_length) )'
+,	'atok.whitespace()'
+]
+
+var Parser = atokParser.createParser(data)
+```
 
 Arguments are not required. If no handler is specified, the [data] will be emitted with the corresponding data.
 
 * `whitespace(handler)`: process spaces, tabs, line breaks. Ignored by default, unless a handler is specified
 	* `handler(whitespace)`
-* `number(delimiters, handler)`: process positive integers. 
-	* __delimiters__ (_Array_): array of characters ending the number
+* `number(handler)`: process positive integers. 
 	* `handler(num)`
-* `float(delimiters, handler)`: process float numbers.
-	* __delimiters__ (_Array_): array of characters ending the float number
+* `float(handler)`: process float numbers.
 	* `handler(floatNumber)`
-* `word(delimiters, handler)`: process a word containing letters, digits and underscore. 
-	* __delimiters__ (_Array_): array of characters ending the float number
+* `word(handler)`: process a word containing letters, digits and underscore. 
 	* `handler(word)`
 * `string(start, end, handler)`: process a delimited string.
 	* _start_ (_String_): starting pattern
@@ -132,7 +144,7 @@ Arguments are not required. If no handler is specified, the [data] will be emitt
 	* _stringQuotes_ (_Array_): array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
 	* `handler(token)`
 * `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
-* `wait(atokPattern)`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
+* `wait(atokPattern[...atokPattern])`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
 
 
 ## Examples

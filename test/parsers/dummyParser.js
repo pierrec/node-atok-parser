@@ -5,7 +5,7 @@ atok
 		.ignore()
 		.addRule('~', 'error')
 		.addRule({ start: '0', end: '9' }, 'digit')
-		.addRule({ start: 'a', end: 'z' }, 'char')
+		.addRule({ start: 'aA', end: 'zZ' }, 'char')
 		.addRule(0, 'end')
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)

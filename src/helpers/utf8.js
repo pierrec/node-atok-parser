@@ -51,13 +51,13 @@ module.exports.utf8 = function (/* start, end, handler */) {
     args[1] = args[0]
 
   function utf8Handler (data) {
-    if (data.length < 2) {
+    // Either not enough data to have UTF8 data or `quiet(true)`
+    if (data.length < 2 || typeof data === 'number') {
       handler(data)
     } else {
-      utf8Current = ''
       utf8Atok.write(data)
       handler( utf8Current )
-      utf8Current = null
+      utf8Current = ''
     }
   }
 

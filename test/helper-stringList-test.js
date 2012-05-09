@@ -8,7 +8,7 @@ var options = {}
 
 describe('helpers.stringList()', function () {
   describe('with an empty list', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should parse it', function (done) {
@@ -30,7 +30,7 @@ describe('helpers.stringList()', function () {
   })
 
   describe('with one list item', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should parse it', function (done) {
@@ -45,14 +45,14 @@ describe('helpers.stringList()', function () {
         }
       }
 
-      p.on('error', done)
+      p.on('error', console.log)
       p.on('data', handler)
       p.write('("a")')
     })
   })
 
   describe('with list items', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should parse it', function (done) {
@@ -74,7 +74,7 @@ describe('helpers.stringList()', function () {
   })
 
   describe('with list items and white spaces', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should parse it', function (done) {
@@ -96,7 +96,7 @@ describe('helpers.stringList()', function () {
   })
 
   describe('with an invalid list start', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should continue and emit an error', function (done) {
@@ -108,7 +108,7 @@ describe('helpers.stringList()', function () {
   })
 
   describe('with an invalid list end', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should continue and emit an error', function (done) {
@@ -120,7 +120,7 @@ describe('helpers.stringList()', function () {
   })
 
   describe('with an invalid separator', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should continue and emit an error', function (done) {
@@ -131,8 +131,8 @@ describe('helpers.stringList()', function () {
     })
   })
 
-  describe('with an interrupted string', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+  describe('with a split string', function () {
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should wait and parse it', function (done) {
@@ -158,7 +158,7 @@ describe('helpers.stringList()', function () {
   })
 
   describe('with single quoted list items', function () {
-    var Parser = atokParser.createParser('./parsers/stringListHelperParser.js', 'options')
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
 
     it('should parse it', function (done) {

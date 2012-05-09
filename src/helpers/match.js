@@ -14,57 +14,60 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 
 	var atok = this
 
-	var current = atok.helpersCache.match || ''
-	var count = atok.helpersCache.matchCount || -1
 	var quotesNum = stringQuotes.length
+	var props = atok.getProps('quiet', 'ignore')
+	var isQuiet = props.quiet
+	var isIgnored = props.isIgnored
 
-	function matchAcc (data) {
-		current += data
+	var count = -1
+	var startOffset = -1
+
+	function matchInit (token) {
+		// First start
+		count = 1
+		// Current offset
+		startOffset = atok.offset
+					- ( isQuiet
+							? 0
+							: typeof token === 'number' ? token : token.length
+						)
+		atok.offsetBuffer = startOffset
 	}
-	function matchWaitString (len) {
-		atok.seek(-len)
-		atok.helpersCache.match = current
-		atok.helpersCache.matchCount = count
-	}
-	function matchStart (token, idx) {
-		// If quiet(true) do not keep the data
-		if (typeof token !== 'number') matchAcc(token)
-		count++
-	}
-	function matchEnd (token, idx) {
-		if (typeof token !== 'number') matchAcc(token)
-		count--
+	function matchLastEnd () {
+		count = 0
 		// On last match, offset by -1 so last rule is triggered on empty buffer
-		if (count === 0) atok.seek(-1)
+		atok.seek(-1)
 	}
-	function matchSkipString (token) {
-		if (typeof token !== 'number') matchAcc(token)
-	}
-	function matchDone () {
-		handler(current)
-		atok.helpersCache.match = current = ''
-		atok.helpersCache.matchCount = count = -1
+	function matchDone (matched) {
+		var endOffset = atok.offset - matched
+
+		if (!isIgnored)
+			handler(
+				isQuiet
+					? endOffset - startOffset
+					: atok._slice(startOffset, endOffset)
+			)
+
+		count = -1
+		startOffset = -1
+		atok.offsetBuffer = -1
 	}
 
 	atok
 		.saveProps('match')
 		.next()
-		.continue(1)
-			// Start found, apply the helper rules
-			.addRule(start, function matchInit () { count = 1 })
-		// 4=start + endLast + end + acc
-		.continue( 2*quotesNum + 4 )
-			// No start found, end now
-			.noop()
+		// Start found, apply the helper rules / No start found, end now
+		.continue( 0, 2*quotesNum + 4 )
+			.addRule(start, matchInit)
 		.continue(-1)
 			// Check start pattern
-			.addRule(start, matchStart)
+			.addRule(start, function matchStart () { count++ })
 		// 2=end + acc
-		.continue( 2*quotesNum + 2 )
+		.continue( quotesNum*atok.wait_length + 2 )
 			// Check end pattern: last or not?
-			.addRule(end, function () { return count === 1 ? 0 : -1 }, matchEnd)
+			.addRule(end, function () { return count === 1 ? 0 : -1 }, matchLastEnd)
 		.continue(-3)
-			.addRule(end, matchEnd)
+			.addRule(end, function matchEnd () { count-- })
 
 	// Skip strings content
 	if (quotesNum > 0) {
@@ -72,27 +75,24 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 
 		for (var i = 0; i < quotesNum; i++)
 			atok
-				// 4=self + end + endLast + start
-				.continue( -(i + 4) )
-					// Full string found
-					.addRule(stringQuotes[i], stringQuotes[i], matchSkipString)
-					// Partial string found, hold on for the end of the string
-					// and resume at the string check rule
-				.break(true).continue(-2).quiet(true)
-					.addRule(stringQuotes[i], matchWaitString)
-				.break().quiet()
+				// Wait until the full string is found
+				.continue( -(i*atok.wait_length + 4) ).ignore(true)
+					.wait(stringQuotes[i], stringQuotes[i], function () {})
 
-		atok.escaped().trim(true)
+		atok.escaped().trim(true).ignore()
 	}
 
 	return atok
-		.continue( -(2*quotesNum + 4) )
-			// Store data and go back to start/end check
-			.addRule(1, matchAcc)
+		.continue( -(quotesNum*atok.wait_length + 4) ).ignore(true)
+			// Go back to start/end check
+			.addRule(1, 'skip')
 		// If data found, send it
 		.loadProps('match')
 		// If 0 is returned and continue(), the rule index is not reset
 		// => return 1 and seek(-1) in the handler!
-		.addRule(function () { return count === 0 ? 1 : -1 }, matchDone)
+		.quiet(true).ignore()
+			.addRule(function () { return count === 0 ? 1 : -1 }, matchDone)
+		.quiet(isQuiet).ignore(isIgnored)
 }
-module.exports.match_length = 11
+// TODO: length is dynamic...which is not supported
+module.exports.match_length = '6 + 2 * wait_length'

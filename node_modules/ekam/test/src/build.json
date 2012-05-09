@@ -1,0 +1,24 @@
+{
+	"input": {
+		"include": "**/*.js **/*.png"
+	, "exclude": "*.json"
+	}
+,	"output": {
+		"path": "../build"
+	, "mode": "0755"
+	, "clean": true
+	}
+,	"uglify": {
+		"mangle": {
+			"defines": {
+				"DEBUG": [ "name", "false" ]
+			}
+		}
+	,	"squeeze": {
+			"make_seqs": true
+		,	"dead_code": true
+		}
+	,	"gen": {
+		}
+	}
+}
