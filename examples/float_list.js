@@ -2,7 +2,7 @@
  * Parse a whitespace separated list of floats, up to maxCount
  * The parser content is hold in a function
  */
-function ParserContent () {
+function ParserContent (options) {
 	/**
 	 * options.maxCount
 	 */
@@ -27,11 +27,15 @@ function ParserContent () {
 }
 
 // Build the float list parser
-var Parser = require('..').createParser(ParserContent, 'options')
+var Parser = require('..').createParser(ParserContent)
 var p = new Parser({ maxCount: process.argv[2] || 5 })
 
-p.on('data', console.log)
+p.on('debug', console.log)
+p.atok.debug(true)
+// p.on('data', console.log)
 p.on('error', console.error)
 
+console.log( p.atok.rules.length )
 // The list should only parse maxCount items
-p.write('1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9 10.10 11.11 ')
+p.end('1.1')
+// p.write('1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9 10.10 11.11 ')

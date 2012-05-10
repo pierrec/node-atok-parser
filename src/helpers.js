@@ -8,7 +8,7 @@ var Atok = require('atok')
 // if a handler is to be defined it *must* be a function
 module.exports._helper_setArguments = function (defaults, args, type) {
 	var atok = this, n = args.length
-	var res = [].concat(defaults)
+	var res = defaults
 
 	// Set the handler
 	var handler = n > 0 && typeof args[n-1] === 'function'
@@ -26,50 +26,21 @@ module.exports._helper_setArguments = function (defaults, args, type) {
 	return res.concat(handler)
 }
 
+var _helper_ruleset_id = 0
 module.exports._helper_word = function (wordStart, handler) {
-	var atok = this
-
-	var props = atok.getProps('quiet', 'ignore')
-	var isQuiet = props.quiet
-	var isIgnored = props.ignore
-
-	function _helper_wordStart (matched) {
-		atok.offsetBuffer = atok.offset - matched
-	}
-	function _helper_wordDone (matched) {
-		atok.seek(-matched)
-		if (!isIgnored)
-			handler(
+	var helperId = '_helper_word'
+	var firstMatch = wordStart
+//include("helpers_common_1.js")
 				isQuiet
 					? atok.offset - atok.offsetBuffer
 					: atok._slice(atok.offsetBuffer, atok.offset)
-			, -1
-			, null
-			)
-
-		atok.offsetBuffer = -1
-	}
-	function _helper_wordEnd () {
-		_helper_wordDone(0)
-	}
-
-	return atok
-		.saveProps('_helper_word')
-		.once('end', _helper_wordEnd)
-		.trimLeft().next().ignore().quiet(true)
-
-			// Match / no match
-			.continue( 0, 2 )
-				.addRule(wordStart, _helper_wordStart)
+//include("helpers_common_2.js")
 
 		// while(character matches a word letter)
 		.continue(-1).ignore(true)
 			.addRule(wordStart, '_helper_wordCheck')
 
-		.loadProps('_helper_word')
-		.quiet(true).ignore()
-			.addRule(_helper_wordDone)
-		.quiet(isQuiet).ignore(isIgnored)
+//include("helpers_common_3.js")
 }
 // Expose the rule real size
 module.exports._helper_word_length = 3

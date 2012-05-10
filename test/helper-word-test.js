@@ -11,6 +11,7 @@ describe('Parser Helpers', function () {
     describe('with a whole word', function () {
       var Parser = atokParser.createParserFromFile('./parsers/wordHelperParser.js', 'options')
       var p = new Parser(options)
+      var err
 
       it('should parse it', function (done) {
         function handler (token, idx, type) {
@@ -19,20 +20,20 @@ describe('Parser Helpers', function () {
               assert.equal(token, 'abc')
             break
             default:
-              done( new Error('Unknown type: ' + type) )
+              err = new Error('Unknown type: ' + type)
           }
         }
 
-        p.on('error', done)
         p.on('data', handler)
         p.write('abc ')
-        done()
+        done(err)
       })
     })
 
     describe('with a split up word', function () {
       var Parser = atokParser.createParserFromFile('./parsers/wordHelperParser.js', 'options')
       var p = new Parser(options)
+      var err
 
       it('should parse it', function (done) {
         function handler (token, idx, type) {
@@ -41,21 +42,21 @@ describe('Parser Helpers', function () {
               assert.equal(token, 'abcabc')
             break
             default:
-              done( new Error('Unknown type: ' + type) )
+              err = new Error('Unknown type: ' + type)
           }
         }
 
-        p.on('error', done)
         p.on('data', handler)
         p.write('abc')
         p.write('abc ')
-        done()
+        done(err)
       })
     })
 
     describe('with a non ending word', function () {
       var Parser = atokParser.createParserFromFile('./parsers/wordHelperParser.js', 'options')
       var p = new Parser(options)
+      var err
       
       it('should not parse it', function (done) {
         var res
@@ -67,15 +68,14 @@ describe('Parser Helpers', function () {
               res = token
             break
             default:
-              done( new Error('Unknown type: ' + type) )
+              err =  new Error('Unknown type: ' + type)
           }
         }
 
-        p.on('error', done)
         p.on('data', handler)
         p.write('abc')
         assert.equal(res, undefined)
-        done()
+        done(err)
       })
     })
   })

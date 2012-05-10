@@ -40,14 +40,13 @@ describe('Parser Helpers Workflow', function () {
         }
       }
 
-      p.on('error', done)
       p.on('data', handler)
       p.write(' "~$" (12ab) abc 123 456.789e7 ')
-      assert.equal(string, true)
-      assert.equal(match, true)
-      assert.equal(word, true)
-      assert.equal(number, true)
-      assert.equal(float, true)
+      assert(string)
+      assert(match)
+      assert(word)
+      assert(number)
+      assert(float)
       done()
     })
   })

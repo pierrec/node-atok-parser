@@ -24,12 +24,12 @@ describe('Parser Helpers Default Behaviour', function () {
     , "atok.on('error', emit_error)"
     , "atok.saveRuleSet('main')"
     , "atok.clearRule()"
-    , "atok.addRule('abc', 'test')"
+    , "atok.addRule('~~~', 'test')"
     , "atok.saveRuleSet('test')"
     , "atok.loadRuleSet('main')"
     ]
 
-  var p, err, found, dataFound, args
+  var p, err, found, dataFound, args, testFound
 
   function getHandler (expectedType) {
     return function (token, idx, type) {
@@ -40,7 +40,10 @@ describe('Parser Helpers Default Behaviour', function () {
           args = arguments
         break
         case 'no-match':
+        break
         case 'test':
+          assert.equal(token, '***')
+          testFound = true
         break
         default:
           err = new Error('Unknown type: ' + type)
@@ -56,6 +59,7 @@ describe('Parser Helpers Default Behaviour', function () {
     err = null
     found = false
     dataFound = null
+    testFound = false
   }
 
   function testHelper (helper, helperRule, helperData, expectedData, expectedDataType) {
@@ -98,6 +102,19 @@ describe('Parser Helpers Default Behaviour', function () {
           assert.equal(typeof args[0], expectedDataType)
           assert.equal(typeof args[1], 'number')
           assert.equal(typeof args[2], 'string')
+          done(err)
+        })
+      })
+
+      describe('if match and #continue() used', function () {
+        it('should call the handler and go to the specified rule', function (done) {
+          data.splice(1, 0, "atok.trim().addRule('***', 'test')")
+          data = ["atok.continue(0)"].concat(data)
+          init(data, helper)
+          p.write(helperData)
+          p.write('***')
+          assert(found)
+          assert(testFound)
           done(err)
         })
       })
@@ -160,10 +177,12 @@ describe('Parser Helpers Default Behaviour', function () {
   testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'})", 'abc', 'abc', 'string')
   testHelper('float', "atok.float()", '123.456', '123.456', 'number')
   testHelper('match', "atok.match('(',')')", '(123.456)', '123.456', 'string')
+  //noop
   testHelper('number', "atok.number()", '123', '123', 'number')
   testHelper('string', "atok.string()", '"abc"', 'abc', 'string')
   testHelper('stringList', "atok.stringList('(',')')", '("abc")', ['abc'], 'object')
   testHelper('utf8', "atok.utf8()", '"a\u00e0bc"', 'aàbc', 'string')
+  //TODO wait
   testHelper('word', "atok.word()", 'abc', 'abc', 'string')
 
   describe('whitespace', function () {

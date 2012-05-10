@@ -8,7 +8,49 @@ var options = {}
 
 describe('Parser Helpers', function () {
   describe('helpers.float()', function () {
-    describe('with a full float as a positive integer', function () {
+    describe('with an invalid float #1', function () {
+      var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
+      var p = new Parser(options)
+      var err
+
+      it('should fail and move to the next rule', function (done) {
+        function handler (token, idx, type) {
+          switch (type) {
+            case 'data':
+            break
+            default:
+              err = new Error('handler should not be called')
+          }
+        }
+
+        p.on('data', handler)
+        p.write('- ')
+        done(err)
+      })
+    })
+
+    false&&describe('with an invalid float #1', function () {
+      var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
+      var p = new Parser(options)
+      var err
+
+      it('should fail and move to the next rule', function (done) {
+        function handler (token, idx, type) {
+          switch (type) {
+            case 'data':
+            break
+            default:
+              err = new Error('handler should not be called')
+          }
+        }
+
+        p.on('data', handler)
+        p.write('-. ')
+        done(err)
+      })
+    })
+
+    false&&describe('with a full float as a positive integer', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options)
 

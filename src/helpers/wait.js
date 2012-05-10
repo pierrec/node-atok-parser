@@ -6,8 +6,10 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 
 	var args = this._helper_setArguments([], arguments, 'wait')
 		, firstMatch = args[0]
-		
-	if (firstMatch.length === 0)
+
+	if (firstMatch === 0
+	|| typeof firstMatch !== 'number' && firstMatch.length === 0
+	)
 		throw new Error('wait(): invalid first pattern')
 
 	var atok = this
