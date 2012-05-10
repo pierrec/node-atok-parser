@@ -31,8 +31,6 @@ module.exports._helper_word = function (wordStart, handler) {
 	var helperId = '_helper_word'
 	var firstMatch = wordStart
 //include("helpers_common_1.js")
-				isQuiet
-					? atok.offset - atok.offsetBuffer
 					: atok._slice(atok.offsetBuffer, atok.offset)
 //include("helpers_common_2.js")
 

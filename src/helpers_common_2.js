@@ -15,8 +15,7 @@
 		.trimLeft().next(_ruleSet).ignore().quiet(true)
 
 			// Match / no match
-			.continue(0)
-				.addRule(firstMatch, _helper_start)
+			.addRule(firstMatch, _helper_start)
 		
 		.saveRuleSet(helperId)
 

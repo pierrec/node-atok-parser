@@ -11,7 +11,7 @@
 	var ruleSet			// rule set the helper is called from
 		, ruleIndex		// index of the rule calling the helper
 	// Current helper rule set id
-	var _ruleSet = helperId + (_helper_ruleset_id++)
+	var _ruleSet = helperId + '#' + (_helper_ruleset_id++)
 
 	function _helper_start (matched) {
 		atok.offsetBuffer = atok.offset - matched
@@ -23,7 +23,7 @@
 		ruleSet = atok.currentRule
 		if (!ruleSet) {
 			// Helper was called from an unsaved rule set
-			ruleSet = _ruleSet + 'unsaved'
+			ruleSet = _ruleSet + '#unsaved'
 			atok.saveRuleSet(ruleSet)
 		}
 	}
@@ -35,3 +35,5 @@
 		
 		if (!isIgnored)
 			handler(
+				isQuiet
+					? atok.offset - atok.offsetBuffer

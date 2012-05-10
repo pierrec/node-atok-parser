@@ -1,5 +1,6 @@
 atok
 	.float()
+	.addRule(1, 'data')
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)
 	})

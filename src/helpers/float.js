@@ -1,45 +1,16 @@
 // float numbers
+var floatStart = { start: '0-', end: '9-' }
 module.exports.float = function (/* handler */) {
 	var args = this._helper_setArguments([], arguments, 'float')
 	var handler = args[0]
 
-	var atok = this
-
-	var props = atok.getProps('quiet', 'ignore')
-	var isQuiet = props.quiet
-	var isIgnored = props.ignore
-
-	function floatStart (matched) {
-		// NB. the offset has already been increased with the match size
-		atok.offsetBuffer = atok.offset - matched
-	}
-	function floatDone (matched) {
-		atok.seek(-matched)
-		if (!isIgnored)
-			handler(
-				isQuiet
-					? atok.offset - atok.offsetBuffer
+	var helperId = '_helper_float'
+	var firstMatch = floatStart
+//include("../helpers_common_1.js")
 					: Number( atok._slice(atok.offsetBuffer, atok.offset) )
-			, -1
-			, null
-			)
-
-		atok.offsetBuffer = -1
-	}
-	function floatEnd () {
-		floatDone(0)
-	}
-
-	atok
-		.saveProps('float')
-		.once('end', floatEnd)
-		.trimLeft()
-
-		.next().quiet(true)
+//include("../helpers_common_2.js")
 		// -123.456e7
 		// ^^^^
-		.continue(0, 7) // Digit found / not found
-		.addRule({ start: '0-', end: '9-' }, floatStart)
 		.continue(-1).ignore(true)
 		.addRule(numberStart, 'float-value1')
 		// -123.456e7
@@ -62,14 +33,7 @@ module.exports.float = function (/* handler */) {
 		//           ^
 		.continue(-1)
 		.addRule(numberStart, 'float-exp-value')
-		// Done!
-		.loadProps('float')
-		// Force some properties to make sure the handler is executed
-		.quiet(true).ignore()
-			.addRule(floatDone)
-		// Restore the properties
-		.quiet(isQuiet).ignore(isIgnored)
 
-	return atok
+//include("../helpers_common_3.js")
 }
 module.exports.float_length = 9
