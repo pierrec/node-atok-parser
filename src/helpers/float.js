@@ -6,9 +6,8 @@ module.exports.float = function (/* handler */) {
 
 	var helperId = '_helper_float'
 	var firstMatch = floatStart
-//include("../helpers_common_1.js")
-					: Number( atok._slice(atok.offsetBuffer, atok.offset) )
-//include("../helpers_common_2.js")
+//var res="Number( atok._slice(startOffset, atok.offset) )"
+//include("../helpers_common_start.js")
 		// -123.456e7
 		// ^^^^
 		.continue(-1).ignore(true)
@@ -34,6 +33,6 @@ module.exports.float = function (/* handler */) {
 		.continue(-1)
 		.addRule(numberStart, 'float-exp-value')
 
-//include("../helpers_common_3.js")
+//include("../helpers_common_endWithLastRule.js")
 }
 module.exports.float_length = 9

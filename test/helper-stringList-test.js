@@ -134,6 +134,7 @@ describe('helpers.stringList()', function () {
   describe('with a split string', function () {
     var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
+    var err
 
     it('should wait and parse it', function (done) {
       var i = 0
@@ -143,17 +144,18 @@ describe('helpers.stringList()', function () {
           case 'stringList':
             i === 0 && assert.deepEqual(token, ['abc'])
             i++
-            i === 1 && done()
+            // i === 1 && done()
           break
           default:
-            done( new Error('Unknown type: ' + type) )
+            err = new Error('Unknown type: ' + type)
         }
       }
 
-      p.on('error', done)
+      p.on('error', function (e) { err = new Error(e.message) })
       p.on('data', handler)
       p.write('( "ab')
       p.write('c" )')
+      done(err)
     })
   })
 

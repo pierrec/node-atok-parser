@@ -1,4 +1,5 @@
-// match a pattern bypassing strings (double or single quote, or both)
+// match a pattern bypassing strings (double or single quote, or both) (default=both)
+// ex: (a("(b")c) -> a("(b")c
 module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	var args = this._helper_setArguments([null,null,['"',"'"]], arguments, 'match')
 	var start = args[0]
@@ -12,87 +13,61 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	if ( !isArray(stringQuotes) )
 		throw new Error('match(): stringQuotes must be an Array')
 
-	var atok = this
-
 	var quotesNum = stringQuotes.length
-	var props = atok.getProps('quiet', 'ignore')
-	var isQuiet = props.quiet
-	var isIgnored = props.isIgnored
+	var count = 0
 
-	var count = -1
-	var startOffset = -1
-
-	function matchInit (token) {
-		// First start
-		count = 1
-		// Current offset
-		startOffset = atok.offset
-					- ( isQuiet
-							? 0
-							: typeof token === 'number' ? token : token.length
-						)
-		atok.offsetBuffer = startOffset
-	}
-	function matchLastEnd () {
-		count = 0
-		// On last match, offset by -1 so last rule is triggered on empty buffer
-		atok.seek(-1)
-	}
-	function matchDone (matched) {
-		var endOffset = atok.offset - matched
-
-		if (!isIgnored)
-			handler(
-				isQuiet
-					? endOffset - startOffset
-					: atok._slice(startOffset, endOffset)
-			)
-
-		count = -1
-		startOffset = -1
-		atok.offsetBuffer = -1
+	function matchEnd (matched) {
+		if (count === 0) {
+			// Check for trimLeft and trimRight
+			if (props.trimLeft) startOffset += firstMatchLen
+			// Hack: should use seek()
+			if (props.trimRight) atok.offset -= matched
+			// Done!
+			_helper_done(0)
+			// Hack: should use seek()
+			if (props.trimRight) atok.offset += matched
+		}
+		else count--
 	}
 
-	atok
-		.saveProps('match')
-		.next()
-		// Start found, apply the helper rules / No start found, end now
-		.continue( 0, 2*quotesNum + 4 )
-			.addRule(start, matchInit)
-		.continue(-1)
+	var helperId = '_helper_match'
+	var firstMatch = start
+//var res = false
+//include("../helpers_common_start.js")
+
+		.continue(-1).quiet(true)
 			// Check start pattern
 			.addRule(start, function matchStart () { count++ })
-		// 2=end + acc
-		.continue( quotesNum*atok.wait_length + 2 )
-			// Check end pattern: last or not?
-			.addRule(end, function () { return count === 1 ? 0 : -1 }, matchLastEnd)
-		.continue(-3)
-			.addRule(end, function matchEnd () { count-- })
+		.continue(-2).trimLeft()
+			// Check end pattern: last one or not?
+			.addRule(end, matchEnd)
+		.quiet().trimLeft(true)
+
+		// End detection does not require use of the [end] event
+		.off('end', _helper_end)
 
 	// Skip strings content
 	if (quotesNum > 0) {
-		atok.escaped(true).trim()
+		atok.escaped(true).trim().ignore(true)
 
 		for (var i = 0; i < quotesNum; i++)
 			atok
 				// Wait until the full string is found
-				.continue( -(i*atok.wait_length + 4) ).ignore(true)
-					.wait(stringQuotes[i], stringQuotes[i], function () {})
+				.continue( -(i + 3) )
+					.wait(stringQuotes[i], stringQuotes[i], function(){})
+					//TODO when helpers support non function last arg
+					// .wait(stringQuotes[i], stringQuotes[i], 'match-skipStringContent')
 
 		atok.escaped().trim(true).ignore()
 	}
 
-	return atok
-		.continue( -(quotesNum*atok.wait_length + 4) ).ignore(true)
+	// Skip anything else
+	atok
+		.continue().ignore(true)
 			// Go back to start/end check
-			.addRule(1, 'skip')
-		// If data found, send it
-		.loadProps('match')
-		// If 0 is returned and continue(), the rule index is not reset
-		// => return 1 and seek(-1) in the handler!
-		.quiet(true).ignore()
-			.addRule(function () { return count === 0 ? 1 : -1 }, matchDone)
-		.quiet(isQuiet).ignore(isIgnored)
+			.addRule(1, 'match-skipContent')
+
+//include("../helpers_common_end.js")
 }
 // TODO: length is dynamic...which is not supported
 module.exports.match_length = '6 + 2 * wait_length'

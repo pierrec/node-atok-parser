@@ -7,9 +7,6 @@ var atokParser = require('..')
 var options = {}
 
 describe('Parser Helpers', function () {
-
-  describe('helpers.match()', function () {
-    var Parser = atokParser.createParserFromFile('./parsers/matchHelperParser.js', 'options')
     var p, err
 
     function getHandler (expectedMatch, done) {
@@ -24,6 +21,9 @@ describe('Parser Helpers', function () {
         }
       }
     }
+
+  describe('helpers.match()', function () {
+    var Parser = atokParser.createParserFromFile('./parsers/matchHelperParser.js', 'options')
 
     beforeEach(function (done) {
       p = new Parser(options)
@@ -51,6 +51,7 @@ describe('Parser Helpers', function () {
         p.write('(abc)')
       })
     })
+
 
     describe('with end not in a string', function () {
       var p = new Parser(options)
@@ -88,6 +89,44 @@ describe('Parser Helpers', function () {
         p.on('data', getHandler('a"b)cd"', done))
         p.write('(a"b)c')
         p.write('d")ef')
+      })
+    })
+  })
+
+  describe('helpers.match() with data match', function () {
+    function _Parser (options) {
+      atok
+        .trimLeft(!options.trimLeft)
+        .trimRight(!options.trimRight)
+        .match('(', ')')
+    }
+
+    var Parser = atokParser.createParser(_Parser)
+
+    describe('trimLeft(true)', function () {
+      var p = new Parser({ trimLeft: true })
+
+      it('should parse it', function (done) {
+        p.atok.on('data', getHandler('(abc', done))
+        p.write('(abc)')
+      })
+    })
+
+    describe('trimRight(true)', function () {
+      var p = new Parser({ trimRight: true })
+
+      it('should parse it', function (done) {
+        p.atok.on('data', getHandler('abc)', done))
+        p.write('(abc)')
+      })
+    })
+
+    describe('trimLeft(true).trimRight(true)', function () {
+      var p = new Parser({ trimLeft: true, trimRight: true })
+
+      it('should parse it', function (done) {
+        p.atok.on('data', getHandler('(abc)', done))
+        p.write('(abc)')
       })
     })
   })

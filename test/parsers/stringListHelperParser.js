@@ -10,5 +10,5 @@ atok
 		// Add some positioning info to the error
 		// Error, extracted token, neighbour size
 		var newerr = self.trackError(err, token, 3)
-		self.emit('error', newerr)
+		self.emit('error', err)
 	})

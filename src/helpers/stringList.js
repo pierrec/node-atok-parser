@@ -1,64 +1,77 @@
 // Parse a list of strings
 // e.g. ('a'|"b") -> [ 'a', 'b' ] with start=(, end=) and sep=|
+// TODO: handle parse errors
 module.exports.stringList = function (/* start, end, sep, handler */) {
 	var args = this._helper_setArguments(['(', ')', ','], arguments, 'stringList')
 	var start = args[0]
 	var end = args[1]
+	var sep = args[2]
 	var endLength = end.length
 	var handler = args[3]
 
-	var atok = this
-	var list = null
-
-	var props = atok.getProps('quiet', 'ignore')
-	var isQuiet = props.quiet
-	var isIgnored = props.ignore
+	var list = []
 
 	function stringListAcc (token) {
 		list.push(token)
 	}
-	function stringListCheckDone (s, offset) {
-		// TODO no substr -> atok support for heteregenous array content
-		// NB. end cannot be empty
-		// Invalid rule if: no start or no end found (invalid one or not received yet)
-		return list === null || s.substr(offset, endLength) !== end ? -1 : endLength
-	}
 	function stringListDone () {
-		if (!isIgnored) handler(list)
-		list = null
+		_helper_done(0)
+		list = []
 	}
 
-	return atok
-		.saveProps('stringList')
-		.trim(true).next()
-
-		// Check the start of the list
-		// Start of list not found, go to the end
-		.continue( 0, 2*atok.whitespace_length + 2*atok.wait_length + 2 )
-			.addRule(start, function stringListInit () { list = [] })
-		// Ignore whitespaces: start->first item or separator->next item
-		.continue( -atok.whitespace_length )
-			.whitespace()
-		// Check for a double quoted string
-		.escaped(true)
-		.continue( atok.wait_length )
-			.wait('"', '"', stringListAcc)
-		// Check for a single quoted string
-		.continue(0)
-			.wait("'", "'", stringListAcc)
-		.escaped()
-		// Ignore whitespaces: current item->separator
-		.continue( -atok.whitespace_length )
-			.whitespace()
-		// If a separator is found, go back to check for more strings
-		.continue( -(2*atok.whitespace_length + 2*atok.wait_length + 1) )
+	function wait (c, jump) {
+		return atok
+			// Check string start...
+			.continue(0, 2)
 			.ignore(true)
-				.addRule(args[2], 'stringList-separator')
+				.addRule(c, c + '-stringStart-stringList')
 			.ignore()
-		// Check the end of the list
-		.loadProps('stringList')
-		.quiet(true).ignore()
-			.addRule(stringListCheckDone, stringListDone)
-		.quiet(isQuiet).ignore(isIgnored)
+			// ...start found, wait for the end of the string
+			.continue( jump + 1 ).escaped(true)
+				.addRule('', c, stringListAcc)
+			.escaped()
+			.break(true).continue(-2).ignore(true)
+				.addRule(c + '-wait-stringList')
+			.break().ignore()
+	}
+
+	var helperId = '_helper_stringList'
+	var firstMatch = start
+//var res = "[].concat(list)"
+//include("../helpers_common_start.js")
+
+	// End detection does not require use of the [end] event
+	.off('end', _helper_end)
+
+	// Ignore whitespaces: start->first item or separator->next item
+	.continue(-1)
+		.whitespace()
+	// Check for the end of the list
+	.continue()
+		.addRule(end, stringListDone)
+	// Check for a double quoted string
+	wait('"', 4)
+		// Check for a single quoted string
+	wait("'", 1)
+
+	atok
+	// If nothing matched at this point -> parse error
+	.continue()
+		.addRule(_helper_doneCancel)
+	// Ignore whitespaces: current item->separator
+	.continue(-1)
+		.whitespace()
+	// If a separator is found, go back to check for more strings
+	.continue(-11)
+		.ignore(true)
+			.addRule(sep, 'stringList-separator')
+		.ignore()
+	.continue()
+	// Check for the end of the list
+		.addRule(end, stringListDone)
+	// If no sep/end found -> parse error
+		.addRule(_helper_doneCancel)
+
+//include("../helpers_common_end.js")
 }
 module.exports.stringList_length = '3 + 2 * whitespace_length + 2 * wait_length'
