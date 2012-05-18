@@ -3,7 +3,7 @@ atok
 	.match('(', ')')
 	.string()
 	.continue(0)
-	// .whitespace()
+	.whitespace()
 	.word()
 	.whitespace()
 	.number()
