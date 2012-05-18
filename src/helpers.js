@@ -39,7 +39,5 @@ module.exports._helper_word = function (wordStart, handler) {
 
 //include("helpers_common_endWithLastRule.js")
 }
-// Expose the rule real size
-module.exports._helper_word_length = 3
 
 //include("helpers/*.js")

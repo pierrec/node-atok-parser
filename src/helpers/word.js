@@ -12,4 +12,3 @@ module.exports.word = function (/* handler */) {
 
 	return this._helper_word({ start: 'aA0_', end: 'zZ9_' }, args[0])
 }
-module.exports.word_length = module.exports._helper_word_length

@@ -35,4 +35,3 @@ module.exports.float = function (/* handler */) {
 
 //include("../helpers_common_endWithLastRule.js")
 }
-module.exports.float_length = 9

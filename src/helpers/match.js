@@ -69,5 +69,3 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 
 //include("../helpers_common_end.js")
 }
-// TODO: length is dynamic...which is not supported
-module.exports.match_length = '6 + 2 * wait_length'

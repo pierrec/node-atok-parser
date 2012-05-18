@@ -45,4 +45,3 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 
 //include("../helpers_common_end.js")
 }
-module.exports.wait_length = 2

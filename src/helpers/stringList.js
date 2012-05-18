@@ -74,4 +74,3 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 
 //include("../helpers_common_end.js")
 }
-module.exports.stringList_length = '3 + 2 * whitespace_length + 2 * wait_length'

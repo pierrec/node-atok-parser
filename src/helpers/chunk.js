@@ -7,4 +7,3 @@ module.exports.chunk = function (/* charSet, handler */) {
 
 	return this._helper_word(args[0], args[1])
 }
-module.exports.chunk_length = module.exports._helper_word_length

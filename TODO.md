@@ -12,8 +12,9 @@
 
 * all helpers: last arg must be a function (should also support number and string)
 * match(start, end): start and end length must be 1 or it fails on chunked data
+  -> will be fixed by atok (always enforce first subrule)
 * tracker() not displaying proper cursor in some instances
-* trimLeft(), trimRight() support for match(), stringList()
+  -> due to bytesRead + seek(-xx) ??
 * escaped(), break() not supported on helpers
 * continue() cannot be used with non numeric values on helpers
 
