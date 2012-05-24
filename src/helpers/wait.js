@@ -24,15 +24,8 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 //var res = false
 //include("../helpers_common_start.js")
 
-		// End detection does not require use of the [end] event
-		.off('end', _helper_end)
-
-	function wait (matched) {
-		_helper_done(0)
-	}
-
 	args[0] = ''
-	args.push(wait)
+	args.push(_helper_end)
 
 	atok
 		// Full check

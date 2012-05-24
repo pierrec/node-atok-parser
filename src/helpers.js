@@ -33,6 +33,9 @@ module.exports._helper_word = function (wordStart, handler) {
 //var res = false
 //include("helpers_common_start.js")
 
+		// Detect the end of the stream
+		.once('end', _helper_end)
+
 		// while(character matches a word letter)
 		.continue(-1).ignore(true)
 			.addRule(wordStart, '_helper_wordCheck')

@@ -40,9 +40,6 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 //var res = "[].concat(list)"
 //include("../helpers_common_start.js")
 
-	// End detection does not require use of the [end] event
-	.off('end', _helper_end)
-
 	// Ignore whitespaces: start->first item or separator->next item
 	.continue(-1)
 		.whitespace()

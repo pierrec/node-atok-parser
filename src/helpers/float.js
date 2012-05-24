@@ -8,6 +8,7 @@ module.exports.float = function (/* handler */) {
 	var firstMatch = floatStart
 //var res="Number( atok._slice(startOffset, atok.offset) )"
 //include("../helpers_common_start.js")
+		.once('end', _helper_end)
 		// -123.456e7
 		// ^^^^
 		.continue(-1).ignore(true)

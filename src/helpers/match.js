@@ -43,9 +43,6 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 			.addRule(end, matchEnd)
 		.quiet().trimLeft(true)
 
-		// End detection does not require use of the [end] event
-		.off('end', _helper_end)
-
 	// Skip strings content
 	if (quotesNum > 0) {
 		atok.escaped(true).trim().ignore(true)

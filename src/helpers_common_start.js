@@ -16,10 +16,12 @@
 		, ruleIndex		// index of the rule calling the helper
 	// Current helper rule set id
 	var _ruleSet = helperId + '#' + (_helper_ruleset_id++)
-	// Starting offset
-	var startOffset, resetOffsetBuffer = false
+	var startOffset 				// Starting offset
+	var resetOffsetBuffer = false	// First helper to set the offsetBuffer value?
+	var running = false				// Current helper running
 
 	function _helper_start (matched) {
+		running = true
 		firstMatchLen = matched
 		startOffset = atok.offset - matched
 		// Prevent buffer slicing by atok
@@ -38,6 +40,7 @@
 		}
 	}
 	function _helper_done (matched) {
+		running = false
 		// Resume where it should
 		atok.loadRuleSet(ruleSet, ruleIndex)
 		// We have some matching which should be reverted
@@ -56,6 +59,7 @@
 		if (resetOffsetBuffer) atok.offsetBuffer = -1
 	}
 	function _helper_doneCancel (matched) {
+		running = false
 		// Resume at the next rule, as if the first match failed
 		atok.loadRuleSet(ruleSet, ruleIndex)
 		// We have some matching which should be reverted
@@ -64,12 +68,11 @@
 		if (resetOffsetBuffer) atok.offsetBuffer = -1
 	}
 	function _helper_end () {
-		_helper_done(0)
+		// Only trigger the running helper on the [end] event
+		if (running) _helper_done(0)
 	}
 
 	atok
-		.once('end', _helper_end)
-
 		.saveProps(helperId)
 		.trimLeft().next(_ruleSet).ignore().quiet(true)
 
