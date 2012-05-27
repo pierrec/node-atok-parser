@@ -1,3 +1,8 @@
+0.3.0 / 2012-05-27
+==================
+
+* Helpers refactoring: removed `loadRuleSet()` usage
+
 0.2.0 / 2012-05-24
 ==================
 
