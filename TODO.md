@@ -1,6 +1,8 @@
 # TODO
 
 * tracker: #end -> #stop
+* rewrite the tracker
+* float(): test cases for invalid floats and used with continue(x, y) y !== null
 
 ## Issues
 

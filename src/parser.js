@@ -153,6 +153,9 @@ exports.createParser = function (data, parserOptions, parserEvents, atokOptions,
     if (_debug === this.debugMode) return this
 
     this.atok.debug(_debug)
+    if (typeof flag === 'function') this.on('debug', flag)
+
+    return this
   }
 
   // Track current line and column

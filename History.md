@@ -2,6 +2,7 @@
 ==================
 
 * Helpers refactoring: removed `loadRuleSet()` usage
+* Added `debug()` accepts a function as a listener for the [debug] event. Only the first listener is registered.
 
 0.2.0 / 2012-05-24
 ==================

@@ -3,12 +3,60 @@ var floatStart = { start: '0-', end: '9-' }
 module.exports.float = function (/* handler */) {
 	var args = this._helper_setArguments([], arguments, 'float')
 	var handler = args[0]
+	var helper_size = 7
 
-	var helperId = '_helper_float'
-	var firstMatch = floatStart
-//var res="Number( atok._slice(startOffset, atok.offset) )"
-//include("../helpers_common_start.js")
-		.once('end', _helper_end)
+	var atok = this
+	var resetOffsetBuffer = false	// First helper to set the offsetBuffer value?
+	var running = false				// Current helper running
+
+	var props = atok.getProps()
+	var isQuiet = props.quiet
+	var isIgnored = props.ignore
+	var hasContinue = props.continue
+
+	function float_start () {
+		running = true
+		// Prevent buffer slicing by atok
+		resetOffsetBuffer = (atok.offsetBuffer < 0)
+		if (resetOffsetBuffer) atok.offsetBuffer = atok.offset - 1
+	}
+	function float_done () {
+		running = false
+
+		// Comply to the tokenizer properties
+		if (!isIgnored) {
+			if (isQuiet)
+				// NB. float may be invalid
+				handler( atok.offset - atok.offsetBuffer, -1, null )
+			else {
+				var num = Number( atok.slice(atok.offsetBuffer, atok.offset) )
+				if ( isFinite(num) )
+					// Valid float!
+					handler(num, -1, null)
+				else {
+					// Invalid float...abort
+					// atok.offset = atok.offsetBuffer
+					//TODO
+				}
+			}
+		}
+
+		if (resetOffsetBuffer) atok.offsetBuffer = -1
+	}
+	function float_end () {
+		// Only trigger the running helper on the [end] event
+		if (running) float_done(0)
+	}
+
+	return atok
+		.once('end', float_end)
+
+		.groupRule(true)
+		// Match / no match
+		.trimLeft().ignore().quiet(true)
+		.next().continue( 0, hasContinue[1] + (hasContinue[1] < 0 ? 0 : helper_size) )
+		.addRule(floatStart, float_start)
+
 		// -123.456e7
 		// ^^^^
 		.continue(-1).ignore(true)
@@ -33,6 +81,12 @@ module.exports.float = function (/* handler */) {
 		//           ^
 		.continue(-1)
 		.addRule(numberStart, 'float-exp-value')
+		// Float parsed, reset the properties except ignore and quiet
+		.setProps(props).ignore().quiet(true)
+		.continue( hasContinue[0] - (hasContinue[0] < 0 ? helper_size : 0) )
+		.addRule(float_done)
+		// Restore all properties
+		.setProps(props)
 
-//include("../helpers_common_endWithLastRule.js")
+		.groupRule()
 }
