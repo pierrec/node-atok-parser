@@ -42,5 +42,5 @@ p.on('data', console.log)
 p.on('error', console.error)
 // p.debug(true)
 
-// The list should only parse maxCount items
+// The list should parse chunks of size maxCount
 p.end('1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9 10.10 11.11')
