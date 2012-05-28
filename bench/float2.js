@@ -1,25 +1,29 @@
 var numString = '123.456 '
 
 var data= ''
-for (var i = 0; i < 2; i++)
+// for (var i = 0; i < 2; i++)
+for (var i = 0; i < 100000; i++)
 	data += numString
 
-function floatListParser () {
-	atok.float()
+var res = []
+function floatListParser (res) {
+	atok.float(function (n) { res.push(n) })
 		.ignore(true)
 		.addRule(1, 'space')
-		.on('data', console.log)
+		// .on('data', console.log)
 }
 
-var Parser = require('..').createParser(floatListParser)
-var p = new Parser
+var Parser = require('..').createParser(floatListParser, 'res')
+var p = new Parser(res)
 
 console.time('split')
-data.split(' ').forEach(Number)
+var res2 = data.split(' ').map(Number)
+res2.pop()
 console.timeEnd('split')
 
-p.debug(true)
-p.on('debug', console.log)
+// p.debug(console.log)
 console.time('parser')
 p.write(data)
 console.timeEnd('parser')
+
+require('assert').deepEqual(res, res2)
