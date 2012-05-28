@@ -20,26 +20,27 @@ module.exports.float = function (/* handler */) {
 		resetOffsetBuffer = (atok.offsetBuffer < 0)
 		if (resetOffsetBuffer) atok.offsetBuffer = atok.offset - 1
 	}
+	function float_done_isIgnored () {
+		running = false
+		if (resetOffsetBuffer) atok.offsetBuffer = -1
+	}
+	function float_done_isQuiet () {
+		running = false
+		handler(
+			atok.offset - atok.offsetBuffer
+		, -1
+		, null
+		)
+
+		if (resetOffsetBuffer) atok.offsetBuffer = -1
+	}
 	function float_done () {
 		running = false
-
-		// Comply to the tokenizer properties
-		if (!isIgnored) {
-			if (isQuiet)
-				// NB. float may be invalid
-				handler( atok.offset - atok.offsetBuffer, -1, null )
-			else {
-				var num = Number( atok.slice(atok.offsetBuffer, atok.offset) )
-				if ( isFinite(num) )
-					// Valid float!
-					handler(num, -1, null)
-				else {
-					// Invalid float...abort
-					// atok.offset = atok.offsetBuffer
-					//TODO
-				}
-			}
-		}
+		handler(
+			Number( atok.slice(atok.offsetBuffer, atok.offset) )
+		, -1
+		, null
+		)
 
 		if (resetOffsetBuffer) atok.offsetBuffer = -1
 	}
@@ -83,10 +84,12 @@ module.exports.float = function (/* handler */) {
 		.addRule(numberStart, 'float-exp-value')
 		// Float parsed, reset the properties except ignore and quiet
 		.setProps(props).ignore().quiet(true)
-		.continue( hasContinue[0] - (hasContinue[0] < 0 ? helper_size : 0) )
-		.addRule(float_done)
+		.continue( hasContinue[0] === null ? null : hasContinue[0] - (hasContinue[0] < 0 ? helper_size : 0) )
+		.addRule(isIgnored, float_done_isIgnored)
+		.addRule(!isIgnored && isQuiet, float_done_isQuiet)
+		.addRule(!isIgnored && !isQuiet, float_done)
 		// Restore all properties
-		.setProps(props)
+		.ignore(isIgnored).quiet(isQuiet)
 
 		.groupRule()
 }
