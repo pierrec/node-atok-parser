@@ -9,12 +9,13 @@ module.exports.whitespace = function (/* handler */) {
 				atok.emit_data(token, arguments.length > 1 ? arguments[1] : -1, 'whitespace')
 			}
 
-	return this
-		.saveProps('whitespace')
+	var isIgnored = atok.getProps('ignore').ignore
+
+	return atok
 		.ignore( arguments.length === 0 )
 			.addRule(
 				[' ','\t','\n','\r']
 			, handler
 			)
-		.loadProps('whitespace')
+		.ignore(isIgnored)
 }

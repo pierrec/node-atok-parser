@@ -34,6 +34,7 @@ describe('Parser Helpers', function () {
 
     describe('with no match', function () {
       it('should skip it', function (done) {
+      // console.log(p.atok._rules)
         function handler (token, idx, type) {
           err = new Error('Handler should not be called')
         }

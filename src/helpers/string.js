@@ -9,11 +9,10 @@ module.exports.string = function (/* start, end, handler */) {
 	if (arguments.length < 3 && (!last || typeof last === 'function'))
 		args[1] = args[0]
 	
-	this
-		.saveProps('string')
+	var props = this.getProps()
 
-		.escaped(true).trim(true)
+	return this
+		.escape(true).trim(true)
 			.addRule(args[0], args[1], args[2])
-
-	return this.loadProps('string')
+		.setProps(props)
 }

@@ -7,9 +7,12 @@ for (var i = 0; i < 100000; i++)
 
 var res = []
 function floatListParser (res) {
-	atok.float(function (n) { res.push(n) })
+	atok
+		.continue(0)
+		.float(function (n) { res.push(n) })
+		.continue()
 		.ignore(true)
-		.addRule(1, 'space')
+		.addRule(' ', 'space')
 		// .on('data', console.log)
 }
 

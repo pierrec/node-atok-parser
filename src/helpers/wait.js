@@ -20,21 +20,22 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 		return this.addRule(firstMatch, handler)
 
 	// Many patterns
-	var helperId = '_helper_wait'
-//var res = false
-//include("../helpers_common_start.js")
+	var props = this.getProps()
 
-	args[0] = ''
-	args.push(_helper_end)
-
-	atok
+	return this
+		.groupRule(true)
+		// Initial check
+		.ignore(true).next()
+		.continue( 0, this._helper_getContinueFail(props, 2) )
+			.addRule(firstMatch, 'wait-firstMatch')
 		// Full check
-		.quiet(true)
-			.addRule.apply(atok, args)
-		.quiet()
+		.setProps(props)
+		.continue( this._helper_getContinueSuccess(props, 2) )
+			.addRule.apply(this, args)
 		// break the loop and go back to the full check
-		.break(true).continue(-2)
+		.break(true).continue(-2).next()
 			.noop()
+		.setProps(props)
 
-//include("../helpers_common_end.js")
+		.groupRule()
 }
