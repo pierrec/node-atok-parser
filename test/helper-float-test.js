@@ -8,7 +8,7 @@ var options = {}
 
 describe('Parser Helpers', function () {
   describe('helpers.float()', function () {
-    false&&describe('with  an invalid float #1', function () {
+    false&&describe('with an invalid float #1', function () {
       var Parser = atokParser.createParserFromFile('./parsers/float2HelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -28,7 +28,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    false&&describe('with  an invalid float #2', function () {
+    false&&describe('with an invalid float #2', function () {
       var Parser = atokParser.createParserFromFile('./parsers/float2HelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -70,7 +70,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a full float as a negative integer', function () {
+    describe('with a full float as a negative integer', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -92,7 +92,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a full float as a positive float', function () {
+    describe('with a full float as a positive float', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -114,7 +114,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a full float as a negative float', function () {
+    describe('with a full float as a negative float', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -136,7 +136,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a full float as a positive float with exponent', function () {
+    describe('with a full float as a positive float with exponent', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -158,7 +158,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a full float as a negative float with exponent', function () {
+    describe('with a full float as a negative float with exponent', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -180,7 +180,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  an integer with exponent', function () {
+    describe('with an integer with exponent', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -202,7 +202,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a negative integer with exponent', function () {
+    describe('with a negative integer with exponent', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -224,7 +224,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a float with a negative exponent', function () {
+    describe('with a float with a negative exponent', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -246,7 +246,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a float with a positive exponent', function () {
+    describe('with a float with a positive exponent', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -268,7 +268,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a split up float', function () {
+    describe('with a split up float', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -291,7 +291,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a split up float 2', function () {
+    describe('with a split up float 2', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -314,7 +314,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a split up float 3', function () {
+    describe('with a split up float 3', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -338,7 +338,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a split up float 4', function () {
+    describe('with a split up float 4', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -362,7 +362,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a split up float 5', function () {
+    describe('with a split up float 5', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -386,7 +386,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a split up float 6', function () {
+    describe('with a split up float 6', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -409,7 +409,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with  a non ending number', function () {
+    describe('with a non ending number', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
       

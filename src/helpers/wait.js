@@ -21,13 +21,18 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 
 	// Many patterns
 	var props = this.getProps()
+	var atok = this
 
-	return this
+	function wait_start (matched) {
+		atok.offset -= matched
+	}
+
+	return atok
 		.groupRule(true)
 		// Initial check
-		.ignore(true).next()
+		.ignore().quiet(true).next()
 		.continue( 0, this._helper_getContinueFail(props, 2) )
-			.addRule(firstMatch, 'wait-firstMatch')
+			.addRule(firstMatch, wait_start)
 		// Full check
 		.setProps(props)
 		.continue( this._helper_getContinueSuccess(props, 2) )

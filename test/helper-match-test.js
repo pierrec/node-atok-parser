@@ -34,13 +34,14 @@ describe('Parser Helpers', function () {
 
     describe('with no match', function () {
       it('should skip it', function (done) {
-      // console.log(p.atok._rules)
         function handler (token, idx, type) {
           err = new Error('Handler should not be called')
         }
 
         p.on('data', handler)
         p.write('abc)def')
+        p._resolveRules()
+        console.log(p.atok._rules)
         assert.equal(p.atok.offset, 0)
         done(err)
       })
@@ -53,8 +54,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-
-    describe('with end not in a string', function () {
+    false&&describe('with end not in a string', function () {
       var p = new Parser(options)
       it('should parse it', function (done) {
         p.on('data', getHandler('abc', done))
@@ -62,14 +62,14 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with end in a string', function () {
+    false&&describe('with end in a string', function () {
       it('should parse it', function (done) {
         p.on('data', getHandler('a"b)c"d', done))
         p.write('(a"b)c"d)ef')
       })
     })
 
-    describe('with a split end', function () {
+    false&&describe('with a split end', function () {
       it('should parse it when string ends', function (done) {
         p.on('data', getHandler('abcd', done))
         p.write('(abc')
@@ -77,7 +77,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with a split end in a string', function () {
+    false&&describe('with a split end in a string', function () {
       it('should parse it when string ends', function (done) {
         p.on('data', getHandler('a"b)cd"', done))
         p.write('(a"b)cd"')
@@ -85,16 +85,19 @@ describe('Parser Helpers', function () {
       })
     })
 
-    describe('with a split end in a split string', function () {
+    false&&describe('with a split end in a split string', function () {
       it('should parse it when string ends', function (done) {
         p.on('data', getHandler('a"b)cd"', done))
+        p.debug(console.log)
+        // console.log(p.atok._rules)
         p.write('(a"b)c')
+        console.log('___')
         p.write('d")ef')
       })
     })
   })
 
-  describe('helpers.match() with data match', function () {
+  false&&describe('helpers.match() with data match', function () {
     function _Parser (options) {
       atok
         .trimLeft(!options.trimLeft)
