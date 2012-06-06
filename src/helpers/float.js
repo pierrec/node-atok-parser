@@ -43,7 +43,7 @@ module.exports.float = function (/* handler */) {
 		.groupRule(true)
 		// Match / no match
 		.ignore().quiet(true)
-		.next().continue( 0, this._helper_getContinueFail(props, 7) )
+		.next().continue( 0, this._helper_continueFailure(props, 7, 0) )
 		.addRule(floatStart, float_start)
 
 		// -123.456e7
@@ -72,7 +72,7 @@ module.exports.float = function (/* handler */) {
 		.addRule(numberStart, 'float-exp-value')
 		// Float parsed, reset the properties except ignore and quiet
 		.setProps(props).ignore().quiet(true)
-		.continue( this._helper_getContinueSuccess(props, 7) )
+		.continue( this._helper_continueSuccess(props, 7, 0) )
 		.addRule(float_done)
 		// Restore all properties
 		.ignore(isIgnored).quiet(isQuiet)

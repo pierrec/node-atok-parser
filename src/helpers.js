@@ -26,19 +26,17 @@ module.exports._helper_setArguments = function (defaults, args, type) {
 	return res.concat(handler)
 }
 
-module.exports._helper_getContinueFail = function (props, size) {
+module.exports._helper_continueFailure = function (props, jumpPos, jumpNeg) {
 	var cont = props.continue[1]
-	return cont + (cont < 0 ? 0 : size)
+	return cont + (cont < 0 ? jumpNeg : jumpPos)
 }
-module.exports._helper_getContinueSuccess = function (props, size) {
+module.exports._helper_continueSuccess = function (props, jumpPos, jumpNeg) {
 	var cont = props.continue[0]
-	return cont === null ? null : cont - (cont < 0 ? size : 0)
+	return cont === null ? null : cont + (cont < 0 ? jumpNeg : jumpPos)
 }
 
 var _helper_ruleset_id = 0
 module.exports._helper_word = function (wordStart, handler) {
-	var helper_size = 2
-
 	var atok = this
 	var resetMarkedOffset = false	// First helper to set the markedOffset value?
 	var running = false				// Current helper running
@@ -77,7 +75,7 @@ module.exports._helper_word = function (wordStart, handler) {
 		.groupRule(true)
 		// Match / no match
 		.ignore().quiet(true)
-		.next().continue( 0, this._helper_getContinueFail(props, helper_size) )
+		.next().continue( 0, this._helper_continueFailure(props, 2, 0) )
 		.addRule(wordStart, _helper_start)
 
 		// while(character matches a word letter)
@@ -86,7 +84,7 @@ module.exports._helper_word = function (wordStart, handler) {
 
 		// Word parsed, reset the properties except ignore and quiet
 		.setProps(props).ignore().quiet(true)
-		.continue( this._helper_getContinueSuccess(props, helper_size) )
+		.continue( this._helper_continueSuccess(props, 0, 2) )
 		.addRule(_helper_done)
 		// Restore all properties
 		.ignore(isIgnored).quiet(isQuiet)

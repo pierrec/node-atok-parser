@@ -81,6 +81,24 @@ describe('helpers.wait()', function () {
 
       it('should call the handler', function (done) {
         function handler () {
+          done()
+        }
+
+        var p = new Parser(handler)
+
+        p.write('_a_')
+      })
+    })
+
+    describe('first len==1 and split write', function () {
+      function _Parser (handler) {
+        atok.wait('_', '_', handler)
+      }
+
+      var Parser = atokParser.createParser(_Parser)
+
+      it('should call the handler', function (done) {
+        function handler () {
           assert(i === 1)
           done()
         }

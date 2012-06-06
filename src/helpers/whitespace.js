@@ -1,5 +1,6 @@
 // Spaces, tabs, line breaks
 // Ignore by default, unless a handler is specified
+var whitespaceList = [' ','\t','\n','\r']
 module.exports.whitespace = function (/* handler */) {
 	var atok = this
 
@@ -14,7 +15,7 @@ module.exports.whitespace = function (/* handler */) {
 	return atok
 		.ignore( arguments.length === 0 )
 			.addRule(
-				[' ','\t','\n','\r']
+				whitespaceList
 			, handler
 			)
 		.ignore(isIgnored)

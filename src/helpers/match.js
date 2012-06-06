@@ -22,8 +22,6 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	var props = atok.getProps()
 	var isQuiet = props.quiet
 	var isIgnored = props.ignore
-	var hasContinue = props.continue
-	var cont = hasContinue[0]
 
 	function match_start (matched) {
 		count = 1
@@ -52,8 +50,8 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	atok
 		.groupRule(true)
 		// Match / no match
-		.ignore().quiet(true)
-		.next().continue( 0, this._helper_getContinueFail(props, 2 + quotesNum + 1) )
+		.ignore().quiet(true).next()
+		.continue( 0, atok._helper_continueFailure(props, 2 + quotesNum + 1, 0) )
 		.addRule(start, match_start)
 
 		.continue(-1)
@@ -64,7 +62,7 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 		.ignore()			// Force handler triggering
 		.quiet(true)		// Only get the pattern size
 		.trimLeft() 		// Make sure the handler gets the size of the end pattern
-		.continue(cont === null ? null : cont + (cont < 0 ? -2 : quotesNum + 2))
+		.continue( atok._helper_continueSuccess(props, quotesNum + 2, -2) )
 			.addRule(end, matchEnd, match_done)
 		.next()
 
@@ -75,7 +73,6 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 		atok
 			// Wait until the full string is found
 			.continue( -(i + 3) )
-				// .addRule(stringQuotes[i], stringQuotes[i], function(){})
 				.wait(stringQuotes[i], stringQuotes[i], function(){})
 				//TODO when helpers support non function last arg
 				// .wait(stringQuotes[i], stringQuotes[i], 'match-skipStringContent')

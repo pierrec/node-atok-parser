@@ -23,7 +23,7 @@ describe('helpers.stringList()', function () {
         }
       }
 
-      p.on('error', done)
+      // p.on('error', done)
       p.on('data', handler)
       p.write('()')
     })
@@ -137,25 +137,21 @@ describe('helpers.stringList()', function () {
     var err
 
     it('should wait and parse it', function (done) {
-      var i = 0
-
       function handler (token, idx, type) {
         switch (type) {
           case 'stringList':
-            i === 0 && assert.deepEqual(token, ['abc'])
-            i++
-            // i === 1 && done()
+            assert.deepEqual(token, ['abc'])
+            done()
           break
           default:
             err = new Error('Unknown type: ' + type)
         }
       }
 
-      p.on('error', function (e) { err = new Error(e.message) })
+      p.on('error', done)
       p.on('data', handler)
       p.write('( "ab')
       p.write('c" )')
-      done(err)
     })
   })
 

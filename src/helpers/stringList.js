@@ -6,68 +6,68 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 	var start = args[0]
 	var end = args[1]
 	var sep = args[2]
-	var endLength = end.length
 	var handler = args[3]
 
-	var list = []
+	var atok = this
+	var resetMarkedOffset = false	// First helper to set the markedOffset value?
 
-	function stringListAcc (token) {
-		list.push(token)
+	var props = atok.getProps()
+	var isQuiet = props.quiet
+	var isIgnored = props.ignore
+
+	var list = []
+	
+	function stringList_start () {
+		// Prevent buffer slicing by atok
+		resetMarkedOffset = (atok.markedOffset < 0)
+		if (resetMarkedOffset) atok.markedOffset = atok.offset
 	}
-	function stringListDone () {
-		_helper_done(0)
+	function stringList_done () {
+		if (!isIgnored) handler(list, -1, null)
+		if (resetMarkedOffset) atok.markedOffset = -1
 		list = []
 	}
-
-	function wait (c, jump) {
-		return atok
-			// Check string start...
-			.continue(0, 2)
-			.ignore(true)
-				.addRule(c, c + '-stringStart-stringList')
-			.ignore()
-			// ...start found, wait for the end of the string
-			.continue( jump + 1 ).escaped(true)
-				.addRule('', c, stringListAcc)
-			.escaped()
-			.break(true).continue(-2).ignore(true)
-				.addRule(c + '-wait-stringList')
-			.break().ignore()
+	function stringList_acc (token) {
+		list.push(token)
 	}
 
-	var helperId = '_helper_stringList'
-	var firstMatch = start
-//var res = "[].concat(list)"
-//include("../helpers_common_start.js")
+	return atok
+		.groupRule(true)
+		.ignore().quiet(true).next().trim(true)
+		.continue( 0, atok._helper_continueFailure(props, 9, 0) )
+			.addRule(start, stringList_start)
+		
+		// Ignore whitespaces: start->first item or separator->next item
+		.continue(-1)
+			.whitespace()
+		// Check for the end of the list
+		.setProps(props).ignore().quiet(true)
+		.continue( atok._helper_continueSuccess(props, 7, -2) )
+			.addRule(end, stringList_done)
+		.ignore(isIgnored).quiet(isQuiet)
+		.continue(2)
+			// Check for a double quoted string
+			.wait('"', '"', stringList_acc)
+			// Check for a single quoted string
+		.continue(1)
+			.wait("'", "'", stringList_acc)
+		.ignore().quiet()
 
-	// Ignore whitespaces: start->first item or separator->next item
-	.continue(-1)
-		.whitespace()
-	// Check for the end of the list
-	.continue()
-		.addRule(end, stringListDone)
-	// Check for a double quoted string
-	wait('"', 4)
-		// Check for a single quoted string
-	wait("'", 1)
-
-	atok
-	// If nothing matched at this point -> parse error
-	.continue()
-		.addRule(_helper_doneCancel)
-	// Ignore whitespaces: current item->separator
-	.continue(-1)
-		.whitespace()
-	// If a separator is found, go back to check for more strings
-	.continue(-11)
-		.ignore(true)
+		// If nothing matched at this point -> parse error
+		.continue()
+			.addRule(stringList_done)
+		// Ignore whitespaces: current item->separator
+		.continue(-1)
+			.whitespace()
+		// If a separator is found, go back to check for more strings
+		.continue(-7).ignore(true)
 			.addRule(sep, 'stringList-separator')
-		.ignore()
-	.continue()
-	// Check for the end of the list
-		.addRule(end, stringListDone)
-	// If no sep/end found -> parse error
-		.addRule(_helper_doneCancel)
+		// Check for the end of the list
+		.setProps(props).ignore().quiet(true)
+		.continue( atok._helper_continueSuccess(props, 1, 0) )
+			.addRule(end, stringList_done)
+		// If no sep/end found -> parse error
+			.addRule(stringList_done)
 
-//include("../helpers_common_end.js")
+		.groupRule()
 }
