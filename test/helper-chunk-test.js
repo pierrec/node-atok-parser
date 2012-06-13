@@ -1,6 +1,6 @@
 /*
  * Parser Helpers tests
-**/
+ */
 var assert = require('assert')
 
 var atokParser = require('..')

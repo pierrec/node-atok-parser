@@ -37,31 +37,49 @@ It is published on node package manager (npm). To install, do:
 
 ## Usage
 
+A silly example to illustrate the various pre defined variables and parser definition.
+
 ``` javascript
-var atokParser = require('atok-parser')
-// myParser.js contains the rules and other relevant code
-var Parser = atokParser.createParserFromFile('./myParser', 'options')
+function myParser (options) {
+	function handler (num) {
+		// The options are set from the myParser function parameters
+		// self is already set to the Parser instance
+		if ( options.check && !isFinite(num) )
+			return self.emit('error', new Error('Invalid float: ' + num))
+
+		self.emit('data', num)
+	}
+	// the float() and whitespace() helpers are provided by atok-parser
+	atok.float(handler)
+	atok.whitespace()
+}
+
+var Parser = require('..').createParser(myParser)
 
 // Add the #parse() method to the Parser
 Parser.prototype.parse = function (data) {
 	var res
 
-	this.sync = true
+	// One (silly) way to make parse() look synchronous...
+	this.once('data', function (data) {
+		res = data
+	})
 	this.write(data)
-	res = this.current
 
-	this.current = null
-	this.sync = false
-
+	// ...write() is synchronous
 	return res
 }
 
 // Instantiate a parser
-var p = new Parser({ option: false })
-	.on('error', console.error)
-	.on('data', console.log)
+var p = new Parser({ check: true })
 
-p.parse('some data')
+// Parse a valid float
+var validfloat = p.parse('123.456 ')
+console.log('parsed data is of type', typeof validfloat, 'value', validfloat)
+
+// The following data will produce an invalid float and an error
+p.on('error', console.error)
+var invalidfloat = p.parse('123.456e1234 ')
 ```
 
 
@@ -77,11 +95,12 @@ The following variables are made available to the parser javascript code:
 	* `atok (_Object_)`: atok tokenizer instanciated with provided options. Also set as this.atok *DO NOT DELETE*
 	* `self (_Object_)`: reference to _this_
  Predefined methods:
-	* `write()`
-	* `end()`
+	* `write(data)`
+	* `end([data])`
 	* `pause()`
 	* `resume()`
-	* `track()`
+	* `debug([logger (_Function_)])`
+	* `track(flag (_Boolean_))`
  Events automatically forwarded from tokenizer to parser:
 	* `drain`
 	* `debug`
@@ -92,61 +111,68 @@ The following variables are made available to the parser javascript code:
 
 ## Helpers
 
-Helpers are a set of standard Atok rules organized to match a specific type of data. If the data is encountered, the handler is fired with the results. The behaviour of a single helper is the same as a single Atok rule:
+Helpers are a set of standard Atok rules organized to match a specific type of data. If the data is encountered, the handler is fired with the results. If not, the rule is ignored. The behaviour of a single helper is the same as a single Atok rule:
 
-* go to the next rule if no match
+* go to the next rule if no match, unless `continue(jump, jumpOnFail)` was applied to the helper
 * go back to the first rule of the rule set upon match, unless `continue(jump)` was applied to the helper
 * next rule set can be set using `next(ruleSetId)`
-* rules can be jumped around by using `continue(jump)`. Note that each helper has its own size (given by the helper name + '_length') that must be used to ensure proper jumping.
+* rules can be jumped around by using `continue(jump, jumpOnFail)`. A helper has exactly the size of a single rule, which greatly helps defining complex rules.
 
 ``` javascript
-var atokParser = require('atok-parser')
-
 // Parse a whitespace separated list of floats
-var data = [
-	'atok.float()'
-,	'atok.continue( -(atok.float_length + atok.whitespace_length) )'
+var myParser = [
+	'atok.float(function (n) { self.emit("data", n) })'
+,	'atok.continue(-1, -2)'
 ,	'atok.whitespace()'
 ]
 
-var Parser = atokParser.createParser(data)
+var Parser = require('atok-parser').createParser(myParser)
+var p = new Parser
+
+p.on('data', function (num) {
+	console.log(typeof num, num)
+})
+p.end('0.133  0.255')
 ```
 
-Arguments are not required. If no handler is specified, the [data] will be emitted with the corresponding data.
+Arguments are not required. If no handler is specified, the [data] event will be emitted with the corresponding data.
 
-* `whitespace(handler)`: process spaces, tabs, line breaks. Ignored by default, unless a handler is specified
+* `whitespace(handler)`: ignore consecutive spaces, tabs, line breaks.
 	* `handler(whitespace)`
-* `number(handler)`: process positive integers. 
+* `number(handler)`: process positive integers
 	* `handler(num)`
-* `float(handler)`: process float numbers.
+* `float(handler)`: process float numbers. NB. the result can be an invalid float (NaN or Infinity).
 	* `handler(floatNumber)`
-* `word(handler)`: process a word containing letters, digits and underscore. 
+* `word(handler)`: process a word containing letters, digits and underscores
 	* `handler(word)`
-* `string(start, end, handler)`: process a delimited string.
-	* _start_ (_String_): starting pattern
-	* _end_ (_String_): ending pattern
+* `string([start, end, esc,] handler)`: process a delimited string. If end is not supplied, it is set to start.
+	* _start_ (_String_): starting pattern (default=")
+	* _end_ (_String_): ending pattern (default=")
+	* _esc_ (_String_): escape character (default=\)
 	* `handler(string)`
-* `utf8(start, end, handler)`: process a delimited string containing UTF-8 encoded characters
-	* _start_ (_String_): starting pattern
-	* _end_ (_String_): ending pattern
+* `utf8([start, end,] handler)`: process a delimited string containing UTF-8 encoded characters. If end is not supplied, it is set to start.
+	* _start_ (_String_): starting pattern (default=")
+	* _end_ (_String_): ending pattern (default=")
 	* `handler(UTF-8String)`
 * `chunk(charSet, handler)`: 
 	* _charSet_ (_Object_): object defining the charsets to be used as matching characters e.g. { start: 'aA', end 'zZ' } matches all letters
 	* `handler(chunk)`
-* `stringList(start, end, separator, handler)`: process a delimited list of strings
-	* _start_ (_String_): starting pattern
-	* _end_ (_String_): ending pattern
-	* _separator_ (_String_): separator character
+* `stringList([start, end, separator,] handler)`: process a delimited list of strings
+	* _start_ (_String_): starting pattern (default=()
+	* _end_ (_String_): ending pattern (default=))
+	* _separator_ (_String_): separator character (default=,)
 	* `handler(listOfStrings)`
-* `match(start, end, stringQuotes[], handler)`: find a matching pattern (e.g. bracket matching), skipping string content if required
+* `match(start, end, stringQuotes, handler)`: find a matching pattern (e.g. bracket matching), skipping string content if required
 	* _start_ (_String_): starting pattern to look for
 	* _end_ (_String_): ending pattern to look for
 	* _stringQuotes_ (_Array_): array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
 	* `handler(token)`
 * `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
-* `wait(atokPattern[...atokPattern])`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
+* `wait(atokPattern[...atokPattern], handler)`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
+* `nvp([nameCharSet, separator, endPattern] handler)`: parse a named value pair (default nameCharSet={ start: 'aA0_', end: 'zZ9_' }, separator==, endPattern={ firstOf: ' \t\n\r' }).
+	* `handler(name, value)`
 
 
 ## Examples
 
-Coming soon.
+A set of examples are located under the examples/ directory.

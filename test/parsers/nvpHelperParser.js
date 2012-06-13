@@ -1,9 +1,7 @@
-options = options || {}
-
-if (options.esc)
-	atok.string(options.start, options.end, options.esc)
+if (options.ending)
+	atok.nvp(null, null, options.ending)
 else
-	atok.string(options.start, options.end)
+	atok.nvp()
 
 atok
 	.on('data', function (token, idx, type) {

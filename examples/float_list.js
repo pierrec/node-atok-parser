@@ -26,7 +26,7 @@ function ParserContent (options) {
 		// Parse a float, emit its value as a [data] event and continue with the rules
 		.float(save)
 		// Skip whitespaces and go back to the beginning when matched
-		// .continue(-1)
+		.continue(null, -2)
 			.whitespace()
 
 		// Emit the remaining data
@@ -37,10 +37,9 @@ function ParserContent (options) {
 var Parser = require('..').createParser(ParserContent)
 var p = new Parser({ maxCount: process.argv[2] || 5 })
 
-p.on('debug', console.log)
 p.on('data', console.log)
 p.on('error', console.error)
-// p.debug(true)
+// p.debug( console.log )
 
 // The list should parse chunks of size maxCount
 p.end('1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9 10.10 11.11')

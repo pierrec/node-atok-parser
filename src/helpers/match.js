@@ -50,7 +50,7 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	atok
 		.groupRule(true)
 		// Match / no match
-		.ignore().quiet(true).next()
+		.ignore().quiet(true).break().next()
 		.continue( 0, atok._helper_continueFailure(props, 2 + quotesNum + 1, 0) )
 		.addRule(start, match_start)
 
@@ -62,9 +62,9 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 		.ignore()			// Force handler triggering
 		.quiet(true)		// Only get the pattern size
 		.trimLeft() 		// Make sure the handler gets the size of the end pattern
-		.continue( atok._helper_continueSuccess(props, quotesNum + 2, -2) )
+		.continue( atok._helper_continueSuccess(props, quotesNum + 1, -2) )
 			.addRule(end, matchEnd, match_done)
-		.next()
+		.next().break()
 
 	// Skip strings content
 	atok.escape(true).trim().ignore(true)

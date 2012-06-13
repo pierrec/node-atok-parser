@@ -1,6 +1,6 @@
 // Parse a list of strings
 // e.g. ('a'|"b") -> [ 'a', 'b' ] with start=(, end=) and sep=|
-// TODO: handle parse errors
+// In case of error, it calls the handler with an error object
 module.exports.stringList = function (/* start, end, sep, handler */) {
 	var args = this._helper_setArguments(['(', ')', ','], arguments, 'stringList')
 	var start = args[0]
@@ -30,10 +30,16 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 	function stringList_acc (token) {
 		list.push(token)
 	}
+	function stringList_error () {
+		var err = new Error('Parse error')
+		err.list = list
+		list = err
+		stringList_done()
+	}
 
 	return atok
 		.groupRule(true)
-		.ignore().quiet(true).next().trim(true)
+		.ignore().quiet(true).next().break().trim(true)
 		.continue( 0, atok._helper_continueFailure(props, 9, 0) )
 			.addRule(start, stringList_start)
 		
@@ -47,15 +53,15 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 		.ignore(isIgnored).quiet(isQuiet)
 		.continue(2)
 			// Check for a double quoted string
-			.wait('"', '"', stringList_acc)
+			.string('"', stringList_acc)
 			// Check for a single quoted string
 		.continue(1)
-			.wait("'", "'", stringList_acc)
+			.string("'", stringList_acc)
 		.ignore().quiet()
 
 		// If nothing matched at this point -> parse error
 		.continue()
-			.addRule(stringList_done)
+			.addRule(stringList_error)
 		// Ignore whitespaces: current item->separator
 		.continue(-1)
 			.whitespace()
@@ -67,7 +73,7 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 		.continue( atok._helper_continueSuccess(props, 1, 0) )
 			.addRule(end, stringList_done)
 		// If no sep/end found -> parse error
-			.addRule(stringList_done)
+			.addRule(stringList_error)
 
 		.groupRule()
 }

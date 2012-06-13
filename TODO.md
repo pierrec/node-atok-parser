@@ -1,9 +1,9 @@
 # TODO
 
-* tracker: #end -> #stop
-* rewrite the tracker
-* float(): test cases for invalid floats and used with continue(x, y) y !== null
-* change handlers signature to err, data
+* all helpers: last arg === false -> ignore the helper
+* all helpers: last arg must be a function (should also support number and string)
+-> enforce last arg as the handler/type on helpers (to be consistent with Atok#addRule())
+* rework somewhat _helper_setArguments to not generate an anonymous function
 
 ## Issues
 
@@ -15,7 +15,6 @@
 
 ## Bugs
 
-* all helpers: last arg must be a function (should also support number and string)
 * tracker() not displaying proper cursor in some instances
   -> due to bytesRead + seek(-xx) ??
 * escaped(), break() not supported on helpers

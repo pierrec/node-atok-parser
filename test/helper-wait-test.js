@@ -15,7 +15,7 @@ describe('helpers.wait()', function () {
       var Parser = atokParser.createParser(_Parser)
 
       it('should call the handler', function (done) {
-        function handler () {
+        function handler (token, idx, type) {
           done()
         }
 
@@ -25,8 +25,7 @@ describe('helpers.wait()', function () {
       })
     })
 
-    // TODO: This will fail for now
-    false&&describe('len>1', function () {
+    describe('len>1', function () {
       function _Parser (handler) {
         atok.wait('___', handler)
         atok.addRule(1, function () {
@@ -37,7 +36,7 @@ describe('helpers.wait()', function () {
       var Parser = atokParser.createParser(_Parser)
 
       it('should call the handler', function (done) {
-        function handler () {
+        function handler (token, idx, type) {
           assert(i === 2)
           done()
         }
@@ -71,6 +70,27 @@ describe('helpers.wait()', function () {
     })
   })
 
+  describe('with many patterns and empty first pattern', function () {
+    describe('', function () {
+      function _Parser (handler) {
+        atok.wait('', '_', handler)
+      }
+
+      var Parser = atokParser.createParser(_Parser)
+
+      it('should call the handler', function (done) {
+        function handler (token, idx, type) {
+          assert.equal(token, 'a')
+          done()
+        }
+
+        var p = new Parser(handler)
+
+        p.write('a_')
+      })
+    })
+  })
+
   describe('with many patterns', function () {
     describe('first len==1', function () {
       function _Parser (handler) {
@@ -80,13 +100,32 @@ describe('helpers.wait()', function () {
       var Parser = atokParser.createParser(_Parser)
 
       it('should call the handler', function (done) {
-        function handler () {
-          done()
+        function handler (token, idx, type) {
+            done()
         }
 
         var p = new Parser(handler)
 
         p.write('_a_')
+      })
+    })
+
+    describe('first len==1 and no match', function () {
+      function _Parser (handler) {
+        atok.wait('_', '_', handler)
+      }
+
+      var Parser = atokParser.createParser(_Parser)
+
+      it('should not call the handler', function (done) {
+        function handler (token, idx, type) {
+            done()
+        }
+
+        var p = new Parser(handler)
+
+        p.write('~a~')
+        done()
       })
     })
 
@@ -98,7 +137,7 @@ describe('helpers.wait()', function () {
       var Parser = atokParser.createParser(_Parser)
 
       it('should call the handler', function (done) {
-        function handler () {
+        function handler (token, idx, type) {
           assert(i === 1)
           done()
         }
@@ -120,7 +159,7 @@ describe('helpers.wait()', function () {
       var Parser = atokParser.createParser(_Parser)
 
       it('should call the handler', function (done) {
-        function handler () {
+        function handler (token, idx, type) {
           assert(i === 1)
           done()
         }
@@ -142,7 +181,7 @@ describe('helpers.wait()', function () {
       var Parser = atokParser.createParser(_Parser)
 
       it('should call the handler', function (done) {
-        function handler () {
+        function handler (token, idx, type) {
           assert(i === 3)
           done()
         }

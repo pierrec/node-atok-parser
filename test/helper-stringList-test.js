@@ -1,10 +1,11 @@
 /*
  * Parser Helpers tests
-**/
+ */
 var assert = require('assert')
 
 var atokParser = require('..')
 var options = {}
+var isError = require('util').isError
 
 describe('helpers.stringList()', function () {
   describe('with an empty list', function () {
@@ -174,6 +175,54 @@ describe('helpers.stringList()', function () {
       p.on('error', done)
       p.on('data', handler)
       p.write("( 'a', 'b' )")
+    })
+  })
+
+  describe('with an error', function () {
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
+    var p = new Parser(options)
+
+    it('should not parse it', function (done) {
+      function handler (token, idx, type) {
+        switch (type) {
+          case 'stringList':
+            assert( isError(token) )
+            assert.deepEqual(token.list, [])
+            p.pause()
+            done()
+          break
+          default:
+            done( new Error('Unknown type: ' + type) )
+        }
+      }
+
+      p.on('error', done)
+      p.on('data', handler)
+      p.write("( ~'a', 'b' )")
+    })
+  })
+
+  describe('with an error #2', function () {
+    var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
+    var p = new Parser(options)
+
+    it('should not parse it', function (done) {
+      function handler (token, idx, type) {
+        switch (type) {
+          case 'stringList':
+            assert( isError(token) )
+            assert.deepEqual(token.list, ['a'])
+            p.pause()
+            done()
+          break
+          default:
+            done( new Error('Unknown type: ' + type) )
+        }
+      }
+
+      p.on('error', done)
+      p.on('data', handler)
+      p.write("( 'a' 'b' )")
     })
   })
 })

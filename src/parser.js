@@ -19,8 +19,6 @@ var Tracker = require('./tracker')
 
 debug("atok version %s", Atok.version)
 
-function noop () {}
-
 // Copy properties from one object to another - not replacing if required
 function merge (a, b, soft) {
   for (var k in b)
@@ -40,6 +38,9 @@ function inspect (s) {
 
 merge(Atok.prototype, Helpers)
 exports.Helpers = Helpers
+
+// Expose the Atok module for addition of custom helpers
+exports.atok = Atok
 
 // Export version
 exports.version = require('../package.json').version
@@ -64,7 +65,9 @@ exports.version = require('../package.json').version
  * - track
  * Events automatically forwarded from tokenizer to parser:
  * - drain
-**/
+ * - debug
+ * - end
+ */
 exports.createParser = function (data, parserOptions, parserEvents, atokOptions, filename) {
   filename = filename || ''
   // Merge the supplied events with Atok's (overwrite)
@@ -100,6 +103,7 @@ exports.createParser = function (data, parserOptions, parserEvents, atokOptions,
   , 'var atok = new Atok(' + (atokOptions ? JSON.stringify(atokOptions): '') + ')'
   , forwardEvent('drain')
   , forwardEvent('debug')
+  , forwardEvent('end')
   , 'this.atok = atok'
   , 'this.atokTracker = new Tracker(atok)'
   , isArray(data)
@@ -143,7 +147,7 @@ exports.createParser = function (data, parserOptions, parserEvents, atokOptions,
   Parser.prototype.end = function (data) {
     return this.atok.end(data)
   }
-  Parser.prototype.destroy = noop
+  Parser.prototype.destroy = function () {}
 
   // Debug
   Parser.prototype.debug = function (flag) {
@@ -165,7 +169,7 @@ exports.createParser = function (data, parserOptions, parserEvents, atokOptions,
     if (type) { // Turn tracking ON
       this.atokTracker.start(type)
     } else { // Turn tracking OFF
-      this.atokTracker.end()
+      this.atokTracker.stop()
     }
 
     return this
@@ -188,16 +192,15 @@ exports.createParser = function (data, parserOptions, parserEvents, atokOptions,
       var margin = 4
 
       var line = tracker.y
-      // var column = atok.bytesRead - tracker.x + 1
       var column = tracker.x + 1
 
       // Extract some data from the current position: some left, some right
       var left = Math.max(0, pos - delta)
-      var leftExtract = atok._slice(left, pos)
+      var leftExtract = atok.slice(left, pos)
       var leftInspected = inspect(leftExtract)
       
       var right = Math.min(atok.length, pos + delta)
-      var rightExtract = atok._slice(pos, right)
+      var rightExtract = atok.slice(pos, right)
       var rightInspected = inspect(rightExtract)
 
       // Position of the cursor below the displayed data
@@ -241,7 +244,7 @@ exports.createParser = function (data, parserOptions, parserEvents, atokOptions,
  * - parserOptions (String): list of the parser named events with their arguments count
  * - parserEvents (Object): events emitted by the parser with
  * - atokOptions (Object): tokenizer options
-**/
+ */
 exports.createParserFromFile = function (file, parserOptions, parserEvents, atokOptions) {
   // Append .js extension if not set
   var filename = file.slice(-3) === '.js' ? file : file + '.js'

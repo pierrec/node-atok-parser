@@ -8,7 +8,7 @@ var options = {}
 
 describe('Parser Helpers', function () {
   describe('helpers.float()', function () {
-    false&&describe('with an invalid float #1', function () {
+    describe('with an invalid float #1', function () {
       var Parser = atokParser.createParserFromFile('./parsers/float2HelperParser.js', 'options')
       var p = new Parser(options), err
 
@@ -28,7 +28,7 @@ describe('Parser Helpers', function () {
       })
     })
 
-    false&&describe('with an invalid float #2', function () {
+    describe('with an invalid float #2', function () {
       var Parser = atokParser.createParserFromFile('./parsers/float2HelperParser.js', 'options')
       var p = new Parser(options), err
 

@@ -12,15 +12,11 @@ utf8Atok
     })
   .quiet()
   .addRule('u', 4, function (data) {
-    for (var hex, u = 0, i = 0; i < 4; i++) {
-      hex = parseInt(data[i], 16)
-      if ( !isFinite(hex) ) {
-        utf8Atok.emit_error( new Error('Invalid unicode: ' + data) )
-        break
-      }
-      u = u * 16 + hex
-    }
-    utf8Current += String.fromCharCode(u)
+    var u = parseInt(data, 16)
+    if ( isFinite(u) )
+      utf8Current += String.fromCharCode(u)
+    else
+      utf8Atok.emit_error( new Error('Invalid unicode: ' + data) )
   })
   .addRule(1, function (data) {
     utf8Atok.emit_error( new Error('Invalid escapee: ' + data) )
@@ -41,14 +37,9 @@ utf8Atok
   })
   .saveRuleSet('expectEscape')
 
-module.exports.utf8 = function (/* start, end, handler */) {
-  var args = this._helper_setArguments(['"', '"'], arguments, 'utf8')
-  var handler = args[2]
-
-  // Special case: if end is not set, use the start value
-  var last = arguments[arguments.length-1]
-  if (arguments.length < 3 && (!last || typeof last === 'function'))
-    args[1] = args[0]
+module.exports.utf8 = function (/* start, end, esc, handler */) {
+  var args = this._helper_setArguments([], arguments, 'utf8')
+  var handler = args.pop()
 
   function utf8Handler (data) {
     // Either not enough data to have UTF8 data or `quiet(true)`
@@ -61,5 +52,7 @@ module.exports.utf8 = function (/* start, end, handler */) {
     }
   }
 
-  return this.string(args[0], args[1], utf8Handler)
+  args.push(utf8Handler)
+
+  return this.string.apply(this, args)
 }

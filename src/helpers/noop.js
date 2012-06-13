@@ -1,10 +1,10 @@
 function noop () {}
 
-module.exports.noop = function () {
+module.exports.noop = function (flag) {
 	var isIgnored = this.getProps('ignore').ignore
 
 	return this
 		.ignore(true)
-			.addRule(noop)
+			.addRule(flag !== false && noop)
 		.ignore(isIgnored)
 }

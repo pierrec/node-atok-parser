@@ -55,7 +55,7 @@ describe('Parser Helpers Default Behaviour', function () {
   function init (data, type, done) {
     var Parser = atokParser.createParser(data, 'options')
     p = new Parser(options)
-    p.on('error', function (e) { err = e })
+    // p.on('error', function (e) { err = e })
     p.on('data', getHandler(type, done))
     err = null
     found = false
@@ -76,7 +76,7 @@ describe('Parser Helpers Default Behaviour', function () {
 
       beforeEach(setData)
 
-      describe('ifno match', function () {
+      describe('if no match', function () {
         it('should go to the next rule', function (done) {
           init(data, 'no-match')
           p.write('<')
@@ -85,7 +85,7 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch', function () {
+      describe('if match', function () {
         it('should call the handler', function (done) {
           init(data, helper)
           p.atok.removeRule('no-match')
@@ -98,7 +98,7 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch', function () {
+      describe('if match', function () {
         it('should set the proper handler signature', function (done) {
           init(data, helper)
           p.atok.removeRule('no-match')
@@ -113,9 +113,9 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch and #continue(0) used', function () {
+      describe('if match and #continue(0) used', function () {
         it('should call the handler and go to the specified rule', function (done) {
-          data.splice(1, 0, "atok.trim().addRule('***', 'test')")
+          data.splice(1, 0, "atok.continue().trim().addRule('***', 'test')")
           data = ["atok.continue(0)"].concat(data)
           init(data, helper)
           p.write(helperData)
@@ -126,23 +126,17 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      false&&describe('ifmatch and #continue(-1) used', function () {
+      describe('if match and #continue(-2) used', function () {
         it('should call the handler and go to the specified rule', function (done) {
           data.splice(1, 0, "atok.continue()")
           data = [
-              "atok.continue(0).addRule('***', 'test').continue()"
-            , "atok.addRule('***', 'testOne').continue(-1)"
+              "atok.trim().continue(1).addRule('***', 'test').continue()"
+            , "atok.addRule('***', 'testOne').continue(-2)"
             ].concat(data)
-          console.log(data)
-          // process.exit()
           init(data, helper)
           p.write('***')
           assert(testFound)
           testFound = false
-          p.write('***')
-          p.write(helperData)
-          assert(found)
-          found = false
           p.write(helperData)
           p.write('***')
           assert(found)
@@ -151,7 +145,7 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch and #next() used', function () {
+      describe('if match and #next() used', function () {
         it('should call the handler and set the next rule set', function (done) {
           init(["atok.next('test')"].concat(data), helper)
           p.write(helperData)
@@ -162,7 +156,7 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch and #ignore() used', function () {
+      describe('if match and #ignore() used', function () {
         it('should not call the handler', function (done) {
           init(["atok.ignore(true)"].concat(data), helper)
           p.write(helperData)
@@ -172,7 +166,7 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch and #quiet() used', function () {
+      describe('if match and #quiet() used', function () {
         it('should call the handler with the matched size', function (done) {
           init(["atok.quiet(true)"].concat(data), helper)
           p.write(helperData)
@@ -183,9 +177,17 @@ describe('Parser Helpers Default Behaviour', function () {
         })
       })
 
-      describe('ifmatch and #break() used', function () {
-        it('should not call the handler', function (done) {
-          init(["atok.break(true)"].concat(data), helper)
+      describe('if match and #break() used', function () {
+        it('should call the handler', function (done) {
+          data.splice(1, 0, "atok.break().trim().addRule('***', 'testOne')")
+          data = [
+            "atok.trim().addRule('***', 'test')"
+          , "atok.break(true).continue(0)"
+          ].concat(data)
+          init(data, helper)
+          p.write('***')
+          assert(testFound)
+          testFound = false
           p.write(helperData)
           p.write('***')
           assert(found)

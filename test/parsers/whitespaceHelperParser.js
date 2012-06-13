@@ -1,5 +1,5 @@
 atok
-	.whitespace(options.ws)
+	.whitespace()
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)
 	})

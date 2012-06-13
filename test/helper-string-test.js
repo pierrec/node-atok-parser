@@ -1,6 +1,6 @@
 /*
  * Parser String Helper tests
-**/
+ */
 var assert = require('assert')
 
 var atokParser = require('..')
@@ -28,6 +28,50 @@ describe('helpers.string()', function () {
       p.on('error', done)
       p.on('data', handler)
       p.write('"abc"')
+    })
+  })
+
+  describe('with a full string and an escaped quote', function () {
+    var p = new Parser()
+
+    it('should parse the input data', function (done) {
+      var matches = 0
+      function handler (token, idx, type) {
+        switch (type) {
+          case 'string':
+            assert.equal(token, 'a\\"bc')
+            done()
+          break
+          default:
+            done( new Error('Unknown type: ' + type) )
+        }
+      }
+
+      p.on('error', done)
+      p.on('data', handler)
+      p.write('"a\\"bc"')
+    })
+  })
+
+  describe('with a full string and an escaped quote with a non standard escape char', function () {
+    var p = new Parser({ esc: "~" })
+
+    it('should parse the input data', function (done) {
+      var matches = 0
+      function handler (token, idx, type) {
+        switch (type) {
+          case 'string':
+            assert.equal(token, 'a~"bc')
+            done()
+          break
+          default:
+            done( new Error('Unknown type: ' + type) )
+        }
+      }
+
+      p.on('error', done)
+      p.on('data', handler)
+      p.write('"a~"bc"')
     })
   })
 
