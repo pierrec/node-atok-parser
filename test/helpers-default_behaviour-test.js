@@ -223,13 +223,29 @@ describe('Parser Helpers Default Behaviour', function () {
   testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'})", 'abc', 'abc', 'string')
   testHelper('float', "atok.float()", '123.456', '123.456', 'number')
   testHelper('match', "atok.match('(',')')", '(123.456)', '123.456', 'string')
-  //noop
   testHelper('number', "atok.number()", '123', '123', 'number')
   testHelper('string', "atok.string()", '"abc"', 'abc', 'string')
-  // testHelper('stringList', "atok.stringList('(',')')", '("abc")', ['abc'], 'object')
+  testHelper('stringList', "atok.stringList('(',')')", '("abc")', ['abc'], 'object')
   testHelper('utf8', "atok.utf8()", '"a\u00e0bc"', 'aàbc', 'string')
-  //TODO wait
+  testHelper('wait', "atok.wait('{','}')", '{abc}', 'abc', 'string')
   testHelper('word', "atok.word()", 'abc', 'abc', 'string')
+
+  describe('noop', function () {
+    var data = [].concat(
+      "atok.continue(0).noop()"
+    , "atok.trimLeft().addRule('***', 'test')"
+    , defaultData
+    )
+
+    describe('if no match', function () {
+      it('should go to the next rule', function (done) {
+        init(data, 'no-match')
+        p.write('***')
+        assert(testFound)
+        done()
+      })
+    })
+  })
 
   describe('whitespace', function () {
     var data = [].concat(
@@ -237,7 +253,7 @@ describe('Parser Helpers Default Behaviour', function () {
     , defaultData
     )
 
-    describe('ifno match', function () {
+    describe('if no match', function () {
       it('should go to the next rule', function (done) {
         init(data, 'no-match')
         p.write('<')

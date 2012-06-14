@@ -48,7 +48,9 @@ module.exports.float = function (/* handler */) {
 		// Match / no match
 		.ignore().quiet(true).break().next()
 		.continue( 0, this._helper_continueFailure(props, 7, 0) )
+		// .continueGroup(0, true)
 			.addRule(floatStart, float_start)
+		.continueGroup()
 
 		// -123.456e7
 		// ^^^^

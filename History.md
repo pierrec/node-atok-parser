@@ -10,7 +10,7 @@
 * Added `debug()` accepts a function as a listener for the [debug] event. Only the first listener is registered.
 * Renamed from `Tracker#end` to `Tracker#stop`
 * `wait()`
-	* now accepts '' as first pattern
+	* now accepts '' and a number as first pattern
 	* stops the processing if not enough data to validate the first pattern
 * `stringList()` calls its handler with an error on any parse error
 * continue(-1) applied to `whitespace()` by default

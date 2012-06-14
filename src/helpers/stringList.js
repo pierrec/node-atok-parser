@@ -51,6 +51,7 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 		.continue( atok._helper_continueSuccess(props, 7, -2) )
 			.addRule(end, stringList_done)
 		.ignore(isIgnored).quiet(isQuiet)
+		.next().break()
 		.continue(2)
 			// Check for a double quoted string
 			.string('"', stringList_acc)
@@ -60,7 +61,10 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 		.ignore().quiet()
 
 		// If nothing matched at this point -> parse error
-		.continue()
+		.continue(
+			atok._helper_continueSuccess(props, 4, -5)
+		,	atok._helper_continueFailure(props, 4, -5)
+		)
 			.addRule(stringList_error)
 		// Ignore whitespaces: current item->separator
 		.continue(-1)
@@ -70,10 +74,17 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 			.addRule(sep, 'stringList-separator')
 		// Check for the end of the list
 		.setProps(props).ignore().quiet(true)
-		.continue( atok._helper_continueSuccess(props, 1, 0) )
+		.continue(
+			atok._helper_continueSuccess(props, 1, -8)
+		)
 			.addRule(end, stringList_done)
 		// If no sep/end found -> parse error
+		.continue(
+			atok._helper_continueSuccess(props, 0, -9)
+		,	atok._helper_continueFailure(props, 0, -9)
+		)
 			.addRule(stringList_error)
 
+		.setProps(props)
 		.groupRule()
 }
