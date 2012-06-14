@@ -48,15 +48,15 @@ module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 		.ignore()
 		.whitespace()
 		// NVP found
-		.setProps(props).ignore().quiet()
+		.setProps(props).ignore()
 		.continue(
-			this._helper_continueSuccess(props, 1, -jump)
-		,	this._helper_continueFailure(props, 1, -jump)
+			this._helper_continueSuccess(props, 1, -jump + 1)
+		,	this._helper_continueFailure(props, 1, -jump + 1)
 		)
 			.string(nvp_done)
 		.continue(
-			this._helper_continueSuccess(props, 0, -jump - 1)
-		,	this._helper_continueFailure(props, 0, -jump - 1)
+			this._helper_continueSuccess(props, 0, -jump)
+		,	this._helper_continueFailure(props, 0, -jump)
 		)
 			.addRule('', args[2], unquotedValues && nvp_done)
 

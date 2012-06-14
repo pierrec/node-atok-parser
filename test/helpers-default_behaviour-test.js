@@ -131,7 +131,7 @@ describe('Parser Helpers Default Behaviour', function () {
           data.splice(1, 0, "atok.continue()")
           data = [
               "atok.trim().continue(1).addRule('***', 'test').continue()"
-            , "atok.addRule('***', 'testOne').continue(-2)"
+            , "atok.addRule('***', 'testOne').continue(-2).trim(true)"
             ].concat(data)
           init(data, helper)
           p.write('***')
@@ -172,7 +172,12 @@ describe('Parser Helpers Default Behaviour', function () {
           p.write(helperData)
           p.write(' ')
           assert(found)
-          assert.equal(typeof dataFound === 'number' ? dataFound : dataFound.length, expectedData.length)
+          assert.equal(
+            typeof dataFound === 'number'? dataFound : dataFound.length
+          , expectedData.hasOwnProperty('length')
+              ? expectedData.length
+              : helperData.length + 1
+          )
           done(err)
         })
       })
@@ -224,6 +229,7 @@ describe('Parser Helpers Default Behaviour', function () {
   testHelper('float', "atok.float()", '123.456', '123.456', 'number')
   testHelper('match', "atok.match('(',')')", '(123.456)', '123.456', 'string')
   testHelper('number', "atok.number()", '123', '123', 'number')
+  testHelper('nvp', "atok.nvp()", 'name="value"', {name:"name",value:"value"}, 'object')
   testHelper('string', "atok.string()", '"abc"', 'abc', 'string')
   testHelper('stringList', "atok.stringList('(',')')", '("abc")', ['abc'], 'object')
   testHelper('utf8', "atok.utf8()", '"a\u00e0bc"', 'aàbc', 'string')

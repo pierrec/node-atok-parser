@@ -69,8 +69,7 @@ module.exports.number = function (/* handler */) {
 		)
 			.addRule(number_check, !isQuiet && number_done)
 			.addRule(isQuiet && number_done)
-		// Restore all properties
-		.ignore(isIgnored).quiet(isQuiet)
 
+		.setProps(props)
 		.groupRule()
 }

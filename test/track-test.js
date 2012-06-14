@@ -122,6 +122,7 @@ describe('Parser', function () {
           switch (type) {
             case 'error':
               var err = p.trackError(new Error('test'), token, 3)
+        // console.log('>>>',p.atokTracker)
               assert.equal(err.line, 1)
               assert.equal(err.column, 2)
               done()

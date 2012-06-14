@@ -9,8 +9,11 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 	var args = this._helper_setArguments([''], arguments, 'wait')
 		, firstMatch = args[0]
 
-	if ( !/number|string/.test(typeof firstMatch) )
-		throw new Error('wait(): Invalid first pattern type (must be number/string): ' + (typeof firstMatch))
+	if ( !/number|string/.test(typeof firstMatch)
+	&&	!firstMatch.hasOwnProperty('start')
+	&&	!firstMatch.hasOwnProperty('end')
+	)
+		throw new Error('wait(): Invalid first pattern type (must be number/string/object): ' + (typeof firstMatch))
 
 	var atok = this
 	var props = atok.getProps()
@@ -57,10 +60,12 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 	}
 
 	// First pattern empty or single pattern of size 1
-	if ( !firstMatch.hasOwnProperty('length') )
-		throw new Error('wait(): Invalid first pattern type (no length): ' + firstMatch)
+	// if ( !firstMatch.hasOwnProperty('length') )
+		// throw new Error('wait(): Invalid first pattern type (no length): ' + firstMatch)
 
-	var firstMatchLength = firstMatch.length
+	var firstMatchLength = firstMatch.hasOwnProperty('length')
+			? firstMatch.length
+			: 1 // { start: ..., end: ... } is of size 1
 
 	if ( firstMatchLength === 0 || (args.length === 2 && firstMatchLength === 1) )
 		return atok.addRule.apply(this, args)

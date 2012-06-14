@@ -157,5 +157,20 @@ describe('Parser Helpers', function () {
         done()
       })
     })
+
+    describe('with an unquoted value and custom ending pattern disabled', function () {
+      var Parser = atokParser.createParserFromFile('./parsers/nvpHelperParser.js', 'options')
+      var p = new Parser({ ending: '' })
+
+      it('should not parse it', function (done) {
+        function handler (token, idx, type) {
+          done( new Error('Shoud not trigger') )
+        }
+
+        p.on('data', handler)
+        p.write('_var_= value> ')
+        done()
+      })
+    })
   })
 })

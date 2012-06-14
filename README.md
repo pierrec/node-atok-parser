@@ -169,7 +169,7 @@ Arguments are not required. If no handler is specified, the [data] event will be
 	* `handler(token)`
 * `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
 * `wait(atokPattern[...atokPattern], handler)`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
-* `nvp([nameCharSet, separator, endPattern] handler)`: parse a named value pair (default nameCharSet={ start: 'aA0_', end: 'zZ9_' }, separator==, endPattern={ firstOf: ' \t\n\r' }).
+* `nvp([nameCharSet, separator, endPattern] handler)`: parse a named value pair (default nameCharSet={ start: 'aA0_', end: 'zZ9_' }, separator==, endPattern={ firstOf: ' \t\n\r' }). Disable endPattern by setting it to '' or [].
 	* `handler(name, value)`
 
 

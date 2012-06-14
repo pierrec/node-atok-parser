@@ -87,9 +87,8 @@ module.exports._helper_word = function (wordStart, handler) {
 		.setProps(props).ignore().quiet(true)
 		.continue( this._helper_continueSuccess(props, 0, 2) )
 		.addRule(_helper_done)
-		// Restore all properties
-		.ignore(isIgnored).quiet(isQuiet)
 
+		.setProps(props)
 		.groupRule()
 }
 
