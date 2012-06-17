@@ -1,6 +1,6 @@
 /*
- * Find Helper tests
-**/
+ * match Helper tests
+ */
 var assert = require('assert')
 
 var atokParser = require('..')
@@ -21,6 +21,26 @@ describe('Parser Helpers', function () {
         }
       }
     }
+
+  describe('with false', function () {
+      function myParser () {
+        atok.match(false)
+      }
+      var Parser = atokParser.createParser(myParser, 'options')
+      var p = new Parser(options)
+
+      it('should ignore it', function (done) {
+        function handler (token, idx, type) {
+          done( new Error('Should not trigger') )
+        }
+
+        p.on('error', done)
+        p.on('data', handler)
+        p.write('(a) ')
+        done()
+      })
+    })
+
 
   describe('helpers.match()', function () {
     var Parser = atokParser.createParserFromFile('./parsers/matchHelperParser.js', 'options')
@@ -97,7 +117,7 @@ describe('Parser Helpers', function () {
       atok
         .trimLeft(!options.trimLeft)
         .trimRight(!options.trimRight)
-        .match('(', ')')
+        .match('(', ')', ['"',"'"], 'match')
     }
 
     var Parser = atokParser.createParser(_Parser)

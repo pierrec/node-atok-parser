@@ -9,7 +9,7 @@ atok
 	.whitespace()
 	.float()
 	.whitespace()
-	.match('(', ')')
+	.match('(', ')', ['"',"'"], 'match')
 	.whitespace()
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)

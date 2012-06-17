@@ -225,15 +225,15 @@ describe('Parser Helpers Default Behaviour', function () {
   }
 
   // helper, helperRule, helperData, expectedData, expectedDataType
-  testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'})", 'abc', 'abc', 'string')
+  testHelper('chunk', "atok.chunk({ start: 'a~$', end: 'z~$'},'chunk')", 'abc', 'abc', 'string')
   testHelper('float', "atok.float()", '123.456', '123.456', 'number')
-  testHelper('match', "atok.match('(',')')", '(123.456)', '123.456', 'string')
+  testHelper('match', "atok.match('(',')','match')", '(123.456)', '123.456', 'string')
   testHelper('number', "atok.number()", '123', '123', 'number')
   testHelper('nvp', "atok.nvp()", 'name="value"', {name:"name",value:"value"}, 'object')
   testHelper('string', "atok.string()", '"abc"', 'abc', 'string')
-  testHelper('stringList', "atok.stringList('(',')')", '("abc")', ['abc'], 'object')
+  testHelper('stringList', "atok.stringList('(',')','=','stringList')", '("abc")', ['abc'], 'object')
   testHelper('utf8', "atok.utf8()", '"a\u00e0bc"', 'aàbc', 'string')
-  testHelper('wait', "atok.wait('{','}')", '{abc}', 'abc', 'string')
+  testHelper('wait', "atok.wait('{','}','wait')", '{abc}', 'abc', 'string')
   testHelper('word', "atok.word()", 'abc', 'abc', 'string')
 
   describe('noop', function () {

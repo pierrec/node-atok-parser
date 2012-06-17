@@ -3,6 +3,9 @@
 // In case of error, it calls the handler with an error object
 module.exports.stringList = function (/* start, end, sep, handler */) {
 	var args = this._helper_setArguments(['(', ')', ','], arguments, 'stringList')
+
+	if (!args) return this
+
 	var start = args[0]
 	var end = args[1]
 	var sep = args[2]
@@ -54,10 +57,10 @@ module.exports.stringList = function (/* start, end, sep, handler */) {
 		.next().break()
 		.continue(2)
 			// Check for a double quoted string
-			.string('"', stringList_acc)
+			.string('"', '"', stringList_acc)
 			// Check for a single quoted string
 		.continue(1)
-			.string("'", stringList_acc)
+			.string("'", "'", stringList_acc)
 		.ignore().quiet()
 
 		// If nothing matched at this point -> parse error

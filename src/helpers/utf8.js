@@ -39,6 +39,9 @@ utf8Atok
 
 module.exports.utf8 = function (/* start, end, esc, handler */) {
   var args = this._helper_setArguments([], arguments, 'utf8')
+
+  if (!args) return this
+
   var handler = args.pop()
 
   function utf8Handler (data) {

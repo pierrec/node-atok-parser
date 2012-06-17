@@ -1,5 +1,5 @@
 atok
-	.stringList('')
+	.stringList()
 	.addRule('', function (data) {
 		atok.emit('error', new Error('Invalid string list: ##' + data + '##'))
 	})

@@ -8,6 +8,25 @@ var options = {}
 
 describe('Parser Helpers', function () {
   describe('helpers.number()', function () {
+    describe('with false', function () {
+      function myParser () {
+        atok.number(false)
+      }
+      var Parser = atokParser.createParser(myParser, 'options')
+      var p = new Parser(options)
+
+      it('should ignore it', function (done) {
+        function handler (token, idx, type) {
+          done( new Error('Should not trigger') )
+        }
+
+        p.on('error', done)
+        p.on('data', handler)
+        p.write('123 ')
+        done()
+      })
+    })
+
     describe('with a full number', function () {
       var Parser = atokParser.createParserFromFile('./parsers/numberHelperParser.js', 'options')
       var p = new Parser(options)

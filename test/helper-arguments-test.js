@@ -1,6 +1,6 @@
 /*
  * Parser Helpers Workflow tests
-**/
+ */
 var assert = require('assert')
 
 var Helpers = require('..').Helpers
@@ -30,7 +30,7 @@ describe('Parser Helpers Argument Setting', function () {
 
     describe('with delimiter argument', function () {
       it('should set delimiters and handler', function (done) {
-        var args = test(delimiters)
+        var args = test(delimiters, 'testType')
 
         assert.equal(args.length, 2)
         assert.deepEqual(args[0], delimiters)
@@ -90,7 +90,7 @@ describe('Parser Helpers Argument Setting', function () {
 
     describe('with start and end arguments', function () {
       it('should set start, end and handler', function (done) {
-        var args = test(start, end)
+        var args = test(start, end, 'testType')
 
         assert.equal(args.length, 3)
         assert.deepEqual(args[0], start)

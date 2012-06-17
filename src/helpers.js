@@ -4,26 +4,34 @@
  */
 var isArray = require('util').isArray
 var Atok = require('atok')
+var sliceArguments = require('fnutils').slice
 
 // if a handler is to be defined it *must* be a function
 module.exports._helper_setArguments = function (defaults, args, type) {
 	var atok = this, n = args.length
-	var res = defaults
+
+	// Ignore the rule
+	if (n > 0 && args[n-1] === false) return false
 
 	// Set the handler
-	var handler = n > 0 && typeof args[n-1] === 'function'
-		? args[--n]
-		: (atok.handler || function helperDefaultHandler (token) {
-						atok.emit_data(token, arguments.length > 1 ? arguments[1] : -1, type)
-					})
-	
-	var i = 0
-	while (i < n) {
-		if (args[i]) res[i] = args[i]
-		i++
+	if (n === 0 || typeof args[n-1] !== 'function') {
+		if (n > 0) type = args[--n]
+
+		defaults.push(
+			atok.handler || function helperDefaultHandler (token) {
+				atok.emit_data(token, arguments.length > 1 ? arguments[1] : -1, type)
+			}
+		)
+	} else {
+		defaults.push( args[--n] )
 	}
 
-	return res.concat(handler)
+	var i = -1
+	while (++i < n) {
+		if (typeof args[i] !== 'undefined') defaults[i] = args[i]
+	}
+
+	return defaults
 }
 
 module.exports._helper_continueFailure = function (props, jumpPos, jumpNeg) {
@@ -77,7 +85,7 @@ module.exports._helper_word = function (wordStart, handler) {
 		.next()				// Dont change ruleSet
 		.break()			// Dont exit the loop
 		.continue( 0, this._helper_continueFailure(props, 2, 0) )
-		.addRule(wordStart, _helper_start)
+			.addRule(wordStart, _helper_start)
 
 		// while(character matches a word letter)
 		.continue(-1).ignore(true)

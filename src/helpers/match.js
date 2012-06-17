@@ -2,16 +2,19 @@
 // ex: (a("(b")c) -> a("(b")c
 module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	var args = this._helper_setArguments([null,null,['"',"'"]], arguments, 'match')
+
+	if (!args) return this
+
 	var start = args[0]
 		, end = args[1]
 		, stringQuotes = args[2]
 		, handler = args[3]
 
 	if (start === null || end === null)
-		throw new Error('match(): start and end required')
+		this.emit_error( new Error('match(): start and end required') )
 
 	if ( !isArray(stringQuotes) )
-		throw new Error('match(): stringQuotes must be an Array')
+		this.emit_error( new Error('match(): stringQuotes must be an Array') )
 
 	var quotesNum = stringQuotes.length
 	var count

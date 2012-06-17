@@ -3,17 +3,28 @@
 // Currently only firstMatch of size 1 are supported
 // __WARNING__ use continue(...) to resume at the right rule upon new data
 module.exports.wait = function (/* pattern[...pattern], handler */) {
-	if (arguments.length < 2)
-		throw new Error('wait(): must have at least 2 arguments: pattern[...pattern], handler')
+	// Set the handler arguments, if any
+	var n = arguments.length
+	var last = n > 0 ? [ arguments[n-1] ]: []
+	var handler = this._helper_setArguments([], last, 'wait')[0]
 
-	var args = this._helper_setArguments([''], arguments, 'wait')
+	if (!handler) return this
+
+	// Convert the arguments object into an array...
+	var args = sliceArguments(arguments, 0)
 		, firstMatch = args[0]
+
+	if (arguments.length < 2)
+		this.emit_error( new Error('wait(): must have at least 2 arguments: pattern[...pattern], handler') )
+
+	// and set the last item as the handler
+	args[n-1] = handler
 
 	if ( !/number|string/.test(typeof firstMatch)
 	&&	!firstMatch.hasOwnProperty('start')
 	&&	!firstMatch.hasOwnProperty('end')
 	)
-		throw new Error('wait(): Invalid first pattern type (must be number/string/object): ' + (typeof firstMatch))
+		this.emit_error( new Error('wait(): Invalid first pattern type (must be number/string/object): ' + (typeof firstMatch)) )
 
 	var atok = this
 	var props = atok.getProps()
@@ -60,9 +71,6 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 	}
 
 	// First pattern empty or single pattern of size 1
-	// if ( !firstMatch.hasOwnProperty('length') )
-		// throw new Error('wait(): Invalid first pattern type (no length): ' + firstMatch)
-
 	var firstMatchLength = firstMatch.hasOwnProperty('length')
 			? firstMatch.length
 			: 1 // { start: ..., end: ... } is of size 1

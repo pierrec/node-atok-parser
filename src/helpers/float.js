@@ -2,6 +2,9 @@
 var floatStart = { start: '0-', end: '9-' }
 module.exports.float = function (/* handler */) {
 	var args = this._helper_setArguments([], arguments, 'float')
+
+	if (!args) return this
+	
 	var handler = args[0]
 	var result
 
@@ -48,9 +51,7 @@ module.exports.float = function (/* handler */) {
 		// Match / no match
 		.ignore().quiet(true).break().next()
 		.continue( 0, this._helper_continueFailure(props, 7, 0) )
-		// .continueGroup(0, true)
 			.addRule(floatStart, float_start)
-		.continueGroup()
 
 		// -123.456e7
 		// ^^^^
@@ -84,8 +85,8 @@ module.exports.float = function (/* handler */) {
 		)
 			.addRule(float_check, !isQuiet && float_done)
 			.addRule(isQuiet && float_done)
-		// Restore all properties
-		.ignore(isIgnored).quiet(isQuiet)
 
+		// Restore all properties
+		.setProps(props)
 		.groupRule()
 }

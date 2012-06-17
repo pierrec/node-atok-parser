@@ -1,5 +1,5 @@
 if (options.ending)
-	atok.nvp(null, null, options.ending)
+	atok.nvp(undefined, undefined, options.ending, 'nvp')
 else
 	atok.nvp()
 

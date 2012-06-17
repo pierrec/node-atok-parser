@@ -1,5 +1,5 @@
 atok
-	.chunk({ start: 'a~$', end: 'z~$'})
+	.chunk({ start: 'a~$', end: 'z~$'}, 'chunk')
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)
 	})

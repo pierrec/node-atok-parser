@@ -4,8 +4,9 @@ var whitespaceList = [' ','\t','\n','\r']
 module.exports.whitespace = function (/* whitespaceList, handler */) {
 	var args = this._helper_setArguments([whitespaceList], arguments, 'whitespace')
 
+	if (!args) return this
+
 	var toIgnore = arguments.length === 0
-			|| typeof arguments[arguments.length-1] !== 'function'
 
 	var atok = this
 	var props = atok.getProps()

@@ -2,6 +2,9 @@
 var numberStart = { start: '0', end: '9' }
 module.exports.number = function (/* handler */) {
 	var args = this._helper_setArguments([], arguments, 'number')
+
+	if (!args) return this
+
 	var handler = args[0]
 
 	// function numberDone (token, idx, type) {

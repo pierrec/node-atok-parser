@@ -7,6 +7,25 @@ var atokParser = require('..')
 var options = {}
 
 describe('helpers.whitespace()', function () {
+  describe('with false', function () {
+      function myParser () {
+        atok.whitespace(false)
+      }
+      var Parser = atokParser.createParser(myParser, 'options')
+      var p = new Parser(options)
+
+      it('should ignore it', function (done) {
+        function handler (token, idx, type) {
+          done( new Error('Should not trigger') )
+        }
+
+        p.on('error', done)
+        p.on('data', handler)
+        p.write(' ')
+        done()
+      })
+    })
+
   describe('with default options', function () {
     var Parser = atokParser.createParserFromFile('./parsers/whitespaceHelperParser.js', 'options')
     var p = new Parser
@@ -21,7 +40,7 @@ describe('helpers.whitespace()', function () {
 
   describe('with specified whitespaces', function () {
     function wsParser () {
-      atok.whitespace(['\n','\r','\t'])
+      atok.whitespace(['\n','\r','\t'], 'whitespace')
     }
     var Parser = atokParser.createParser(wsParser)
     var p = new Parser

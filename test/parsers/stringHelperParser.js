@@ -1,9 +1,9 @@
 options = options || {}
 
 if (options.esc)
-	atok.string(options.start, options.end, options.esc)
+	atok.string(options.start, options.end, options.esc, 'string')
 else
-	atok.string(options.start, options.end)
+	atok.string(options.start, options.end, undefined, 'string')
 
 atok
 	.on('data', function (token, idx, type) {

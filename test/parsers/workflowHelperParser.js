@@ -1,6 +1,6 @@
 atok
 	.whitespace()
-	.match('(', ')')
+	.match('(', ')', ['"',"'"], 'match')
 	.string()
 	.continue(0)
 	.whitespace()

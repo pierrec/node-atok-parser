@@ -1,6 +1,9 @@
 // Named value pairs
 module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 	var args = this._helper_setArguments([wordStart, '=', { firstOf: ' \t\n\r' }], arguments, 'nvp')
+
+	if (!args) return this
+
 	var handler = args[3]
 
 	var name = null

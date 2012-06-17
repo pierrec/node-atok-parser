@@ -8,6 +8,25 @@ var options = {}
 var isError = require('util').isError
 
 describe('helpers.stringList()', function () {
+  describe('with false', function () {
+      function myParser () {
+        atok.stringList(false)
+      }
+      var Parser = atokParser.createParser(myParser, 'options')
+      var p = new Parser(options)
+
+      it('should ignore it', function (done) {
+        function handler (token, idx, type) {
+          done( new Error('Should not trigger') )
+        }
+
+        p.on('error', done)
+        p.on('data', handler)
+        p.write('a~b$c ')
+        done()
+      })
+    })
+
   describe('with an empty list', function () {
     var Parser = atokParser.createParserFromFile('./parsers/stringListHelperParser.js', 'options')
     var p = new Parser(options)
