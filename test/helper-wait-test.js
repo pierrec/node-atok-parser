@@ -128,7 +128,7 @@ describe('helpers.wait()', function () {
   })
 
   describe('with many patterns and empty first pattern', function () {
-    describe('', function () {
+    describe('single write', function () {
       function _Parser (handler) {
         atok.wait('', '_', handler)
       }
@@ -144,6 +144,26 @@ describe('helpers.wait()', function () {
         var p = new Parser(handler)
 
         p.write('a_')
+      })
+    })
+
+    describe('split write', function () {
+      function _Parser (handler) {
+        atok.wait('', '_', handler)
+      }
+
+      var Parser = atokParser.createParser(_Parser)
+
+      it('should call the handler', function (done) {
+        function handler (token, idx, type) {
+          assert.equal(token, 'a')
+          done()
+        }
+
+        var p = new Parser(handler)
+
+        p.write('a')
+        p.write('_')
       })
     })
   })

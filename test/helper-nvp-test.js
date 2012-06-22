@@ -165,6 +165,7 @@ describe('Parser Helpers', function () {
           switch (type) {
             case 'nvp':
               assert.deepEqual(token, { name: '_var_', value: 'value' })
+              assert.equal(idx, 0)
             break
             default:
               done( new Error('Unknown type: ' + type) )

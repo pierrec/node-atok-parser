@@ -1,4 +1,4 @@
-if (options.ending)
+if ( options.hasOwnProperty('ending') )
 	atok.nvp(undefined, undefined, options.ending, 'nvp')
 else
 	atok.nvp()

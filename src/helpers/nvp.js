@@ -7,7 +7,7 @@ module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 	var handler = args[3]
 
 	var name = null
-	var unquotedValues = args[2] && (typeof args[2].length !== 'number' || args[2].length === 0)
+	var unquotedValues = args[2] ? (typeof args[2].length !== 'number' || args[2].length === 0) : false
 	var jump = 4 + (+unquotedValues)
 
 	var atok = this
@@ -23,13 +23,13 @@ module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 		resetMarkedOffset = (atok.markedOffset < 0)
 		if (resetMarkedOffset) atok.markedOffset = atok.offset - 1
 	}
-	function nvp_done (value) {
+	function nvp_done (value, idx) {
 		if (!isIgnored)
 			handler(
 				isQuiet
 					? atok.offset - atok.markedOffset
 					: { name: name, value: value }
-			, -1
+			, idx
 			, null
 			)
 
@@ -53,8 +53,10 @@ module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 		// NVP found
 		.setProps(props).ignore()
 		.continue(
-			this._helper_continueSuccess(props, 1, -jump + 1)
-		,	this._helper_continueFailure(props, 1, -jump + 1)
+			this._helper_continueSuccess(props, +unquotedValues, -jump + 1)
+		,	unquotedValues
+				? 0
+				: this._helper_continueFailure(props, 0, -jump + 1)
 		)
 			.string(nvp_done)
 		.continue(

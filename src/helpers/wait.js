@@ -76,7 +76,18 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 			: 1 // { start: ..., end: ... } is of size 1
 
 	if ( firstMatchLength === 0 || (args.length === 2 && firstMatchLength === 1) )
-		return atok.addRule.apply(this, args)
+		return atok
+			.groupRule(true)
+				.continue(
+					this._helper_continueSuccess(props, 1, 0)
+				)
+					.addRule.apply(this, args)
+				// break the loop and go back to the full check
+				.break(true).continue(-2).next()
+					.noop()
+
+			.setProps(props)
+			.groupRule()
 
 	atok
 		.groupRule(true)

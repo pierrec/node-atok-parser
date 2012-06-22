@@ -1,8 +1,8 @@
 /*
  * Simple XML parser:
- * - tag attributes must be quoted
+ * - attribute names do not support non ASCII characters
  * - only a subset of xml entities are replaced, overwrite Parser.ENTITIES for more
- * - encoding is not processed (utf-8 by default)
+ * - encoding set from the XML is not processed (utf-8 by default)
  */
 // Parser events
 var events = {
@@ -19,8 +19,6 @@ var events = {
 	}
 
 function xmlParser (options) {
-	this.error = null
-
 	// XML special entities
 	var entityRex = /&(.+?);/mg
 	// Modify ENTITIES as required (only typical subset defined here)
@@ -62,34 +60,48 @@ function xmlParser (options) {
 		, atok.buffer.slice( atok.offset - n + 8, atok.offset - 1 )
 		)
 	}
-	function attrFound (attr) {
+	function attrFound (attr, idx) {
 		attr.value = decodeValue( attr.value )
 		self.emit('attribute', attr)
 		attrName = null
+		// Unquoted value?
+		if (idx >= 0) {
+			atok.offset--
+			atokTracker.xx--
+		}
 	}
 	function opentag (tag) {
 		tagNameStack.push(tag)
 		self.emit('opentag', tag)
+		atok.offset--
+		atokTracker.xx--
 	}
 	function selfclosetag () {
 		self.emit('closetag', tagNameStack.pop())
 	}
 	function closetag (tag) {
-		if ( tagNameStack.length > 0 && tagNameStack.pop() === tag )
-			return self.emit('closetag', tag)
-
-		self.pause()
-		self.emit('error', new Error('Invalid closetag: ' + tag))
-	}
-	function setError (err) {
-		return function () {
-			error(err)
+		var currentTag = tagNameStack.pop()
+		if ( currentTag === tag ) {
+			self.emit('closetag', tag)
+			atok.offset--
+			atokTracker.xx--
+		} else {
+			console.log(atok.buffer)
+			setError( new Error('Invalid closetag: ' + tag + ' !== ' + currentTag) )(tag)
 		}
 	}
-	function error (err) {
-		self.error = err
-		self.pause()
-		self.emit('error', err)
+	function setError (err) {
+		return function (data) {
+			// error() is a pre defined function to format the error and pause the stream
+			self.emit('error', error(err, data))
+			// Initialize
+			atok.clear(true).loadRuleSet('main')
+		}
+	}
+
+	// Expect a tag - wait() is used we know there must be a tag (starting or ending)
+	function getTag (handler) {
+		return atok.wait('', { firstOf: '>/ \t\n\r' }, handler)
 	}
 
 	atok
@@ -103,17 +115,18 @@ function xmlParser (options) {
 
 		// Opening/closing tag
 		.clearRule()
-		.next('attributes')
-			.chunk(nameCharSet, opentag)
-		.next()
-		.continue(0, 1).ignore(true)
-				.addRule('/', 'closetag')
-		.next('closetag').ignore()
-				.chunk(nameCharSet, closetag)
 		.next('special').ignore(true)
 			.addRule('!', 'special')
 		.next().ignore()
-				.addRule( setError(new Error('Parse error: invalid tag')) )
+		.continue(0, 1).ignore(true)
+				.addRule('/', 'closetag')
+		.continue().ignore()
+		.next('closetag')
+
+	getTag(closetag)
+		.next('attributes')
+
+	getTag(opentag)
 		.saveRuleSet('starttag')
 
 		.clearRule()
@@ -152,7 +165,8 @@ function xmlParser (options) {
 		.saveRuleSet('closetag')
 			.addRule('/>', selfclosetag)
 		.next()
-		.nvp(nameCharSet, '=', { firstOf: '> \t\n\r' }, attrFound)
+		// Attributes do not support non ASCII characters
+		.nvp(nameCharSet, '=', { firstOf: '/> \t\n\r' }, attrFound)
 		.saveRuleSet('attributes')
 		
 		// Processing instruction
@@ -162,12 +176,14 @@ function xmlParser (options) {
 			.addRule({ start: 256, end: Infinity }, 'non-ascii')
 		.continue(1, 0)
 			.addRule('<?', 'pi')
+		.continue()
 		// No PI, start parsing
 		.ignore().next('main')
 			.noop()
 		// PI
 		.continue(0, 1).next()
 			.chunk(nameCharSet, setProcInst)
+		.continue()
 		.next('main')
 			.wait('', '?>', procInst)
 		.next()
@@ -179,30 +195,48 @@ var Parser = require('..').createParser(xmlParser, 'options', events)
 // Instantiate a parser
 var p = new Parser
 
-// Listen to all events and log their data
-Object.keys(events).forEach(
-	function (event) {
-			p.on(event, events[event]
-			? function (data) { console.log(event, data) }
-			: function () { console.log(event) }
-		)
-	}
-)
-
 p.on('end', function () {
 	console.timeEnd('xml')
 })
 
-// p.debug(console.log)
 // Parse an XML stream
 console.time('xml')
 if (process.argv[2]) {
+	// From a supplied file name
 	require('fs').createReadStream( process.argv[2] ).pipe(p)
 } else {
-	// p.end('<a><b></c></b></a>')
-	p.end('<!DOCTYPE <abc> 123 456><a a="true" b="__">123</a><b><c>456</c> <d>&amp;</d></b>')
-	// p.write('<item>\n')
-	// p.write('  one <a>1</a>')
-	// p.write('  two <a>2</a>')
-	// p.end('</item>\n')
+	// For logging only
+	// Listen to all events and log their data
+	Object.keys(events)
+	.filter(function (event) {
+		return events.hasOwnProperty(event) && !/^(error|end|drain|debug|newListener|oldListener)$/.test(event)
+	})
+	.forEach(
+		function (event) {
+				p.on(event, events[event]
+				? function (data) { console.log('[' + event + ']', data) }
+				: function () { console.log('[' + event + ']') }
+			)
+		}
+	)
+	// Enable line and column tracking - displayed upon error
+	p.track(true)
+
+	// Should get an error
+	p.on('error', console.log)
+	p.write('<a><b></c></b></a>')
+
+	// Upon error, we should be able to resume processing (with a cleaned buffer in this case)
+	// p.resume()
+
+	// Stop tracking
+	p.track()
+
+	// Should parse both items and the associated a tag
+	p.write('<!DOCTYPE encoding = "<ignored>" >')
+	p.write('<item a="true" b="__">\n')
+	p.write('  one <a>1</a>')
+	p.write('  two <a>2</a>')
+	p.write('<selfclosed scname=scvalue></selfclosed>')
+	p.end('</item>\n')
 }

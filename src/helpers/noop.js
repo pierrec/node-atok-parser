@@ -7,6 +7,6 @@ module.exports.noop = function (flag) {
 		? this
 		: this
 			.ignore(true)
-				.addRule(flag !== false && noop)
+				.addRule(noop)
 			.ignore(isIgnored)
 }

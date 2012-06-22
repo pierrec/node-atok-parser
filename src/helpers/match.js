@@ -76,9 +76,7 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 		atok
 			// Wait until the full string is found
 			.continue( -(i + 3) )
-				.wait(stringQuotes[i], stringQuotes[i], function(){})
-				//TODO when helpers support non function last arg
-				// .wait(stringQuotes[i], stringQuotes[i], 'match-skipStringContent')
+				.wait(stringQuotes[i], stringQuotes[i], 'match-skipStringContent')
 
 	atok.escape().trim(true)
 

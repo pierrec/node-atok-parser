@@ -1,21 +1,26 @@
-0.3.0 / 2012-06-11
+0.3.0 / 2012-06-22
 ==================
 
-* Helpers refactoring: removed `loadRuleSet()` usage
-* `string()` helper
-	* waits for the end of the string if first match is found
-	* accepts a custom escape character: `string(start, end, esc, handler)`
-* `number()` and `float()` ignore invalid numbers (NaN, -Infinity, Infinity) if used with `quiet()`
-* `whitespace` now processes multiple white spaces and can accept a list of them
+* Helpers:
+	* Internal refactoring: removed `loadRuleSet()` usage, leveraging Atok#groupRule()
+	* `string()`
+		* waits for the end of the string if first match is found
+		* accepts a custom escape character: `string(start, end, esc, handler)`
+	* `number()` and `float()` ignore invalid numbers (NaN, -Infinity, Infinity) if used with `quiet()`
+	* `whitespace` now processes multiple white spaces by default (override with continue()) and can accept a list of them
+	* `wait()`
+		* now accepts '' and a number as first pattern
+		* stops the processing if not enough data to validate the first pattern
+	* `stringList()` calls its handler with an error on any parse error
+	* New helper `nvp(nameCharSet, separator, endingPattern, handler)`: provide an object representing a named value pair ({ name: <name>, value: <value> }) to its handler
+* Tracker
+	* `track()` now only accepts boolean
 * Added `debug()` accepts a function as a listener for the [debug] event. Only the first listener is registered.
-* Renamed from `Tracker#end` to `Tracker#stop`
-* `wait()`
-	* now accepts '' and a number as first pattern
-	* stops the processing if not enough data to validate the first pattern
-* `stringList()` calls its handler with an error on any parse error
-* continue(-1) applied to `whitespace()` by default
-* Event [end] is now forwarded from atok
-* Added new helper `nvp(nameCharSet, separator, endingPattern, handler)`: return an object representing a named value pair ({ name: <name>, value: <value> }).
+* Event [end] is now forwarded from the tokenizer
+* New variable available in the Parser main body: atokTracker
+* Internal changes:
+	* Renamed `Tracker#end` to `Tracker#stop`
+	* Tracker rewrite
 
 0.2.0 / 2012-05-24
 ==================
