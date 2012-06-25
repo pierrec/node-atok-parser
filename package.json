@@ -26,6 +26,7 @@
   , "ev": ">= 0.0.3"
   , "eval": ">= 0.0.1"
   , "debug": "latest"
+  , "fnutils": "latest"
   }
 , "devDependencies": {
     "mocha": ">= 0.10"
