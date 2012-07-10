@@ -85,14 +85,15 @@ function xmlParser (options) {
 			self.emit('closetag', tag)
 			atok.offset--
 			atokTracker.xx--
+			atok.loadRuleSet('closetag')
 		} else {
-			console.log(atok.buffer)
 			setError( new Error('Invalid closetag: ' + tag + ' !== ' + currentTag) )(tag)
 		}
 	}
 	function setError (err) {
 		return function (data) {
 			// error() is a pre defined function to format the error and pause the stream
+			self.pause()
 			self.emit('error', error(err, data))
 			// Initialize
 			atok.clear(true).loadRuleSet('main')
@@ -121,7 +122,6 @@ function xmlParser (options) {
 		.continue(0, 1).ignore(true)
 				.addRule('/', 'closetag')
 		.continue().ignore()
-		.next('closetag')
 
 	getTag(closetag)
 		.next('attributes')
@@ -209,16 +209,15 @@ if (process.argv[2]) {
 	// Listen to all events and log their data
 	Object.keys(events)
 	.filter(function (event) {
-		return events.hasOwnProperty(event) && !/^(error|end|drain|debug|newListener|oldListener)$/.test(event)
+		return events.hasOwnProperty(event)
+		&& !/^(error|end|drain|debug|newListener|oldListener)$/.test(event)
 	})
-	.forEach(
-		function (event) {
-				p.on(event, events[event]
-				? function (data) { console.log('[' + event + ']', data) }
-				: function () { console.log('[' + event + ']') }
-			)
-		}
-	)
+	.forEach(function (event) {
+		p.on(event, events[event]
+			? function (data) { console.log('[' + event + ']', data) }
+			: function () { console.log('[' + event + ']') }
+		)
+	})
 	// Enable line and column tracking - displayed upon error
 	p.track(true)
 
@@ -227,7 +226,7 @@ if (process.argv[2]) {
 	p.write('<a><b></c></b></a>')
 
 	// Upon error, we should be able to resume processing (with a cleaned buffer in this case)
-	// p.resume()
+	p.resume()
 
 	// Stop tracking
 	p.track()
@@ -239,4 +238,5 @@ if (process.argv[2]) {
 	p.write('  two <a>2</a>')
 	p.write('<selfclosed scname=scvalue></selfclosed>')
 	p.end('</item>\n')
+	// console.log(p.atok)
 }
