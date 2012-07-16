@@ -1,3 +1,8 @@
+0.3.1 / 2012-07-16
+==================
+
+* The [end] event is no longer automatically forwarded
+
 0.3.0 / 2012-06-22
 ==================
 
