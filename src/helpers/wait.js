@@ -53,6 +53,7 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 						.addRule(firstMatch, wait_start)
 					.break(true).continue(-2)
 						.noop()
+					.break()
 
 		// Full check
 		atok
@@ -139,6 +140,7 @@ module.exports.wait = function (/* pattern[...pattern], handler */) {
 					.addRule(firstMatchLength, wait_start)
 				.break(true).continue(-2)
 					.noop()
+				.break()
 				.ignore( props.trimLeft )
 				.continue( 0, this._helper_continueFailure(props, 2, -3) )
 					.addRule(firstMatch, wait_start)
