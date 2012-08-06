@@ -86,24 +86,27 @@ var invalidfloat = p.parse('123.456e1234 ')
 ## Methods
 
 * `createParserFromFile(file[, parserOptions, parserEvents, atokOptions])`: return a parser class (Function) based on the input file.
-	* __file__ (_String_): file to read the parser from(.js extension is optional)
-	* __parserOptions__ (_String_): list of the parser named events with their arguments count
-	* __parserEvents__ (_Object_): events emitted by the parser with
+	* __file__ (_String_): file to read the parser from (.js extension is optional)
+	* __parserOptions__ (_String_): coma separated list of parser options
+	* __parserEvents__ (_Object_): events emitted by the parser with their arguments count
 	* __atokOptions__ (_Object_): tokenizer options
 
-The following variables are made available to the parser javascript code:
-	* `atok (_Object_)`: atok tokenizer instanciated with provided options. Also set as this.atok *DO NOT DELETE*
-	* `self (_Object_)`: reference to _this_
- Predefined methods:
-	* `write(data)`
-	* `end([data])`
-	* `pause()`
-	* `resume()`
-	* `debug([logger (_Function_)])`
-	* `track(flag (_Boolean_))`
- Events automatically forwarded from tokenizer to parser:
-	* `drain`
-	* `debug`
+	The following variables are made available to the parser javascript code:
+		* `atok (_Object_)`: atok tokenizer instanciated with provided options. Also set as this.atok *DO NOT DELETE*
+		* `self (_Object_)`: reference to _this_
+
+	Predefined methods:
+		* `write(data)`
+		* `end([data])`
+		* `pause()`
+		* `resume()`
+		* `debug([logger (_Function_)])`
+		* `track(flag (_Boolean_))`
+
+	Events automatically forwarded from tokenizer to parser:
+		* `drain`
+		* `debug`
+
 
 * `createParser(data[, parserOptions, parserEvents, atokOptions])`: same as `createParserFromFile()` but with supplied content instead of a file name
 	* __data__ (_String_ | _Array_ | _Function_): the content to be used, can also be an array of strings or a function. If a function, its parameters are used as parser options unless parserOptions is set
