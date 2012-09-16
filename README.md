@@ -12,8 +12,8 @@ Writing parsers is quite a common but sometimes lengthy task. To ease this proce
 	* [drain]
 	* [debug]
 * Provide preset variables within the parser constructor
-	* atok (atok tokenizer instance)
-	* self (this)
+	* atok {_Object_}: atok tokenizer instance
+	* self {_Object_}: this
 * Provide helpers that simplify parsing rules (see below for description)
 	* `whitespace()`
 	* `number()`
@@ -37,7 +37,7 @@ It is published on node package manager (npm). To install, do:
 
 ## Usage
 
-A silly example to illustrate the various pre defined variables and parser definition.
+A silly example to illustrate the various pre defined variables and parser definition. It parses a flot number and returns the value via its `#parse` method.
 
 ``` javascript
 function myParser (options) {
@@ -86,30 +86,30 @@ var invalidfloat = p.parse('123.456e1234 ')
 ## Methods
 
 * `createParserFromFile(file[, parserOptions, parserEvents, atokOptions])`: return a parser class (Function) based on the input file.
-	* __file__ (_String_): file to read the parser from (.js extension is optional)
-	* __parserOptions__ (_String_): coma separated list of parser options
-	* __parserEvents__ (_Object_): events emitted by the parser with their arguments count
-	* __atokOptions__ (_Object_): tokenizer options
+	* __file__ {_String_}: file to read the parser from (.js extension is optional)
+	* __parserOptions__ {_String_}: coma separated list of parser options
+	* __parserEvents__ {_Object_}: events emitted by the parser with their arguments count
+	* __atokOptions__ {_Object_}: tokenizer options
 
 	The following variables are made available to the parser javascript code:
-		* `atok (_Object_)`: atok tokenizer instanciated with provided options. Also set as this.atok *DO NOT DELETE*
-		* `self (_Object_)`: reference to _this_
+	* `atok {_Object_}`: atok tokenizer instanciated with provided options. Also set as this.atok *DO NOT DELETE*
+	* `self {_Object_}`: reference to _this_
 
 	Predefined methods:
-		* `write(data)`
-		* `end([data])`
-		* `pause()`
-		* `resume()`
-		* `debug([logger (_Function_)])`
-		* `track(flag (_Boolean_))`
+	* `write(data)`
+	* `end([data])`
+	* `pause()`
+	* `resume()`
+	* `debug([logger (_Function_)])`
+	* `track(flag (_Boolean_))`
 
 	Events automatically forwarded from tokenizer to parser:
-		* `drain`
-		* `debug`
+	* `drain`
+	* `debug`
 
 
 * `createParser(data[, parserOptions, parserEvents, atokOptions])`: same as `createParserFromFile()` but with supplied content instead of a file name
-	* __data__ (_String_ | _Array_ | _Function_): the content to be used, can also be an array of strings or a function. If a function, its parameters are used as parser options unless parserOptions is set
+	* __data__ {_String_ | _Array_ | _Function_}: the content to be used, can also be an array of strings or a function. If a function, its parameters are used as parser options unless parserOptions is set
 
 
 ## Helpers
@@ -149,26 +149,26 @@ Arguments are not required. If no handler is specified, the [data] event will be
 * `word(handler)`: process a word containing letters, digits and underscores
 	* `handler(word)`
 * `string([start, end, esc,] handler)`: process a delimited string. If end is not supplied, it is set to start.
-	* _start_ (_String_): starting pattern (default=")
-	* _end_ (_String_): ending pattern (default=")
-	* _esc_ (_String_): escape character (default=\)
+	* _start_ {_String_}: starting pattern (default=")
+	* _end_ {_String_}: ending pattern (default=")
+	* _esc_ {_String_}: escape character (default=\)
 	* `handler(string)`
 * `utf8([start, end,] handler)`: process a delimited string containing UTF-8 encoded characters. If end is not supplied, it is set to start.
-	* _start_ (_String_): starting pattern (default=")
-	* _end_ (_String_): ending pattern (default=")
+	* _start_ {_String_}: starting pattern (default=")
+	* _end_ {_String_}: ending pattern (default=")
 	* `handler(UTF-8String)`
 * `chunk(charSet, handler)`: 
-	* _charSet_ (_Object_): object defining the charsets to be used as matching characters e.g. { start: 'aA', end 'zZ' } matches all letters
+	* _charSet_ {_Object_}: object defining the charsets to be used as matching characters e.g. { start: 'aA', end 'zZ' } matches all letters
 	* `handler(chunk)`
 * `stringList([start, end, separator,] handler)`: process a delimited list of strings
-	* _start_ (_String_): starting pattern (default=()
-	* _end_ (_String_): ending pattern (default=))
-	* _separator_ (_String_): separator character (default=,)
+	* _start_ {_String_}: starting pattern (default=()
+	* _end_ {_String_}: ending pattern (default=))
+	* _separator_ {_String_}: separator character (default=,)
 	* `handler(listOfStrings)`
 * `match(start, end, stringQuotes, handler)`: find a matching pattern (e.g. bracket matching), skipping string content if required
-	* _start_ (_String_): starting pattern to look for
-	* _end_ (_String_): ending pattern to look for
-	* _stringQuotes_ (_Array_): array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
+	* _start_ {_String_}: starting pattern to look for
+	* _end_ {_String_}: ending pattern to look for
+	* _stringQuotes_ {_Array_}: array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
 	* `handler(token)`
 * `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
 * `wait(atokPattern[...atokPattern], handler)`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
