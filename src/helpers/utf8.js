@@ -10,7 +10,7 @@ utf8Atok
     .addRule(charList, function (data, idx) {
       utf8Current += valueList[idx]
     })
-  .quiet()
+  .quiet().trimRight()
   .addRule('u', 4, function (data) {
     var u = parseInt(data, 16)
     if ( isFinite(u) )

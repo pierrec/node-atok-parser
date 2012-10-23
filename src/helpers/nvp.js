@@ -11,36 +11,36 @@ module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 	var jump = 4 + (+unquotedValues)
 
 	var atok = this
-	var resetMarkedOffset = false	// First helper to set the markedOffset value?
+	var markedOffset
 
 	var props = atok.getProps()
 	var isQuiet = props.quiet
 	var isIgnored = props.ignore
+	var trimRight = +unquotedValues
 
 	function nvp_start (token) {
 		name = token
 		// Prevent buffer slicing by atok
-		resetMarkedOffset = (atok.markedOffset < 0)
-		if (resetMarkedOffset) atok.markedOffset = atok.offset - 1
+		markedOffset = atok._mark() - (isQuiet ? token : token.length)
 	}
 	function nvp_done (value, idx) {
 		if (!isIgnored)
 			handler(
 				isQuiet
-					? atok.offset - atok.markedOffset
+					? (atok.offset + value) - markedOffset + trimRight
 					: { name: name, value: value }
 			, idx
 			, null
 			)
 
-		if (resetMarkedOffset) atok.markedOffset = -1
+		atok._unmark()
 		name = null
 	}
 
 	return atok
 		.groupRule(true)
 		// Match / no match
-		.ignore().quiet().break().next()
+		.ignore().break().next()
 		.continue( 0, this._helper_continueFailure(props, jump, 0) )
 			.chunk(args[0], nvp_start)
 

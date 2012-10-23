@@ -20,7 +20,7 @@ module.exports.float = function (/* handler */) {
 		running = true
 		// Prevent buffer slicing by atok
 		resetMarkedOffset = (atok.markedOffset < 0)
-		if (resetMarkedOffset) atok.markedOffset = atok.offset - 1
+		if (resetMarkedOffset) atok.markedOffset = atok.offset
 	}
 	function float_check () {
 		result = Number( atok.slice(atok.markedOffset, atok.offset) )

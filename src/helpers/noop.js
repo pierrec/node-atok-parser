@@ -1,4 +1,4 @@
-function noop () {}
+function noop () { return 0 }
 
 module.exports.noop = function (flag) {
 	var isIgnored = this.getProps('ignore').ignore

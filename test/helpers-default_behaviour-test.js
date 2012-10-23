@@ -172,6 +172,7 @@ describe('Parser Helpers Default Behaviour', function () {
           p.write(helperData)
           p.write(' ')
           assert(found)
+
           assert.equal(
             typeof dataFound === 'number'? dataFound : dataFound.length
           , expectedData.hasOwnProperty('length')

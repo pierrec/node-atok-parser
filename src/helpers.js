@@ -43,6 +43,20 @@ module.exports._helper_continueSuccess = function (props, jumpPos, jumpNeg) {
 	return cont === null ? null : cont + (cont < 0 ? jumpNeg : jumpPos)
 }
 
+var markedOffsetList = []
+var offsetList = []
+module.exports._mark = function () {
+	markedOffsetList.push( this.markedOffset )
+	offsetList.push(this.offset)
+
+	return this.markedOffset = this.offset
+}
+module.exports._unmark = function () {
+	this.markedOffset = markedOffsetList.pop()
+
+	return offsetList.pop()
+}
+
 module.exports._helper_word = function (wordStart, handler) {
 	var atok = this
 	var resetMarkedOffset = false	// First helper to set the markedOffset value?
@@ -55,21 +69,20 @@ module.exports._helper_word = function (wordStart, handler) {
 	function _helper_start () {
 		running = true
 		// Prevent buffer slicing by atok
-		resetMarkedOffset = (atok.markedOffset < 0)
-		if (resetMarkedOffset) atok.markedOffset = atok.offset - 1
+		atok._mark()
 	}
 	function _helper_done () {
 		running = false
-		if (!isIgnored)
+		var offset = atok._unmark()
+		if (!isIgnored) {
 			handler(
 				isQuiet
-					? atok.offset - atok.markedOffset
-					: atok.slice(atok.markedOffset, atok.offset)
+					? atok.offset - offset
+					: atok.slice(offset, atok.offset)
 			, -1
 			, null
 			)
-
-		if (resetMarkedOffset) atok.markedOffset = -1
+		}
 	}
 	function _helper_end () {
 		if (running) _helper_done()

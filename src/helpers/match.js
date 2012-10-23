@@ -30,12 +30,14 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 		count = 1
 		// Prevent buffer slicing by atok
 		resetMarkedOffset = (atok.markedOffset < 0)
-		if (resetMarkedOffset) atok.markedOffset = atok.offset - matched
+		// Mimic trimLeft() behaviour
+		if (resetMarkedOffset)
+			atok.markedOffset = atok.offset + ( props.trimLeft ? matched : 0 )
 	}
 	function match_done (matched) {
 		if (!isIgnored) {
 			// Mimic trimRight() behaviour
-			var offset = atok.offset - ( props.trimRight ? matched : 0 )
+			var offset = atok.offset + ( props.trimRight ? 0 : matched )
 			handler(
 				isQuiet
 					? offset - atok.markedOffset
@@ -53,7 +55,7 @@ module.exports.match = function (/* start, end, stringQuotes, handler */) {
 	atok
 		.groupRule(true)
 		// Match / no match
-		.ignore().quiet(true).break().next()
+		.ignore().quiet(true).break().next().trimLeft()
 		.continue( 0, atok._helper_continueFailure(props, 2 + quotesNum + 1, 0) )
 		.addRule(start, match_start)
 

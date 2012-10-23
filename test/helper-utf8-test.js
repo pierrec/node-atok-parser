@@ -57,10 +57,10 @@ describe('Parser UTF-8 Helper', function () {
 
     it('should parse the input data', function (done) {
       p.on('data', function (data) {
-        assert.equal(data, 'a\u0123b')
+        assert.equal(data, 'a\u00bdb')
         done()
       })
-      p.write('"a\\u0123b"')
+      p.write('"a\\u00bdb"')
     })
   })
 
