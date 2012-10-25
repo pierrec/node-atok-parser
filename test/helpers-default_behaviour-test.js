@@ -177,7 +177,7 @@ describe('Parser Helpers Default Behaviour', function () {
             typeof dataFound === 'number'? dataFound : dataFound.length
           , expectedData.hasOwnProperty('length')
               ? expectedData.length
-              : helperData.length + 1
+              : helperData.length
           )
           done(err)
         })
