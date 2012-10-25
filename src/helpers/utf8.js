@@ -46,7 +46,7 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
 
   function utf8Handler (data) {
     // Either not enough data to have UTF8 data or `quiet(true)`
-    if (data.length < 2 || typeof data === 'number') {
+    if (data.length < 6) {
       handler(data)
     } else {
       utf8Atok.write(data)
@@ -55,7 +55,10 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
     }
   }
 
-  args.push(utf8Handler)
+  var props = this.getProps()
+
+  // Nothing to do if quiet()
+  args.push( props.quiet ? handler : utf8Handler )
 
   return this.string.apply(this, args)
 }
