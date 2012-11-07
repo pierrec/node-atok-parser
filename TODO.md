@@ -1,5 +1,6 @@
 # TODO
 
+* optimize utf8
 
 ## Issues
 

@@ -11,7 +11,9 @@ module.exports.nvp = function (/* charSet, sep, endPattern, handler */) {
 	var jump = 4 + (+unquotedValues)
 
 	var atok = this
+
 	var markedOffset
+	var markedOffsetFlag = false
 
 	var props = atok.getProps()
 	var isQuiet = props.quiet

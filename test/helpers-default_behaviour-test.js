@@ -151,7 +151,7 @@ describe('Parser Helpers Default Behaviour', function () {
           p.write(helperData)
           p.write(' ')
           assert(found)
-          assert.equal(p.atok.currentRule, 'test')
+          assert.equal(p.atok._firstRule.currentRule, 'test')
           done(err)
         })
       })
