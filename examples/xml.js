@@ -27,7 +27,6 @@ function xmlParser (options) {
 	// Parser variables
 	var nameCharSet = { start: 'aA0_:-.', end: 'zZ9_:-.' }
 	var tagNameStack = []		// Current tag hierarchy
-	var attrName = null			// Current attribute name
 	var procName = null			// Current processing instruction name
 
 	function entityToCode (str, ent) {
@@ -63,7 +62,6 @@ function xmlParser (options) {
 	function attrFound (attr, idx) {
 		attr.value = decodeValue( attr.value )
 		self.emit('attribute', attr)
-		attrName = null
 		// Unquoted value?
 		if (idx >= 0) {
 			atok.offset--
@@ -200,30 +198,33 @@ p.on('end', function () {
 })
 
 // Parse an XML stream
+
+// For logging only
+// Listen to all events and log their data
+Object.keys(events)
+.filter(function (event) {
+	return events.hasOwnProperty(event)
+	&& !/^(error|end|drain|pipe|debug|newListener|oldListener)$/.test(event)
+})
+.forEach(function (event) {
+	p.on(event, events[event]
+		? function (data) { console.log('[' + event + ']', data) }
+		: function () { console.log('[' + event + ']') }
+	)
+})
+
 console.time('xml')
 if (process.argv[2]) {
+	p.setEncoding('utf-8')
 	// From a supplied file name
 	require('fs').createReadStream( process.argv[2] ).pipe(p)
 } else {
-	// For logging only
-	// Listen to all events and log their data
-	Object.keys(events)
-	.filter(function (event) {
-		return events.hasOwnProperty(event)
-		&& !/^(error|end|drain|debug|newListener|oldListener)$/.test(event)
-	})
-	.forEach(function (event) {
-		p.on(event, events[event]
-			? function (data) { console.log('[' + event + ']', data) }
-			: function () { console.log('[' + event + ']') }
-		)
-	})
 	// Enable line and column tracking - displayed upon error
 	p.track(true)
 
 	// Should get an error
 	p.on('error', console.log)
-	p.write('<a><b></c></b></a>')
+	p.write('<?xml version="1.0" encoding="UTF-8"?><a><b></c></b></a>')
 
 	// Upon error, we should be able to resume processing (with a cleaned buffer in this case)
 	p.resume()

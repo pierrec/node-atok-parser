@@ -1,8 +1,9 @@
 // Parse a whitespace separated list of floats
 var myParser = [
 	'atok.float(function (n) { self.emit("data", n) })'
-,	'atok.continue(null, -2)'
 ,	'atok.whitespace()'
+,	'atok.continue(-3)'
+,	'atok.noop()'
 ]
 
 var Parser = require('..').createParser(myParser)

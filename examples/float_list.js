@@ -26,8 +26,9 @@ function ParserContent (options) {
 		// Parse a float, emit its value as a [data] event and continue with the rules
 		.float(save)
 		// Skip whitespaces and go back to the beginning when matched
-		.continue(null, -2)
 			.whitespace()
+		.continue(-3)
+			.noop()
 
 		// Emit the remaining data
 		.on('end', end)
