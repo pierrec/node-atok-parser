@@ -126,7 +126,7 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
           })
         .quiet().continue(-3).trimRight()
         .addRule('u', 4, function utf8Push (data) {
-          if (isQuiet) return utf8Current += 5
+          if (isQuiet) return utf8Current += 2
 
           // The escapeOffset is 4 bytes longer
           escapeOffset += 4
