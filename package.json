@@ -3,7 +3,7 @@
 , "name": "atok-parser"
 , "description": "Parser generator based on the atok tokenizer"
 , "keywords": ["parser","async","stream","atok"]
-, "version": "0.4.0"
+, "version": "0.4.1"
 , "homepage": "http://github.com/pierrec/node-atok-parser"
 , "repository": {
     "type": "git"

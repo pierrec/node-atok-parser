@@ -64,6 +64,18 @@ describe('Parser UTF-8 Helper', function () {
     })
   })
 
+  describe('with multiple UTF-8 characters', function () {
+    var p = new Parser()
+
+    it('should parse the input data', function (done) {
+      p.on('data', function (data) {
+        assert.equal(data, 'a\u00bdb\u00E9c')
+        done()
+      })
+      p.write('"a\\u00bdb\\u00E9c"')
+    })
+  })
+
   describe('successive parses', function () {
     var p = new Parser()
     var count = 0

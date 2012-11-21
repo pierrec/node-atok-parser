@@ -1,3 +1,9 @@
+0.4.1 / 2012-11-21
+==================
+
+* Added block_stream example
+* utf8 helper rewrite: performance improvements
+
 0.4.0 / 2012-11-07
 ==================
 
