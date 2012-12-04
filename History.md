@@ -1,3 +1,9 @@
+0.4.2 / 2012-12-04
+==================
+
+* Constructor no longer set to Parser if `createParser` or `createParserFromFile` is supplied a function but the function name
+* Fix: `utf8()` helper supports custom arguments, continue() jumps properly
+
 0.4.1 / 2012-11-21
 ==================
 

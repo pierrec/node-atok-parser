@@ -170,7 +170,8 @@ Arguments are not required. If no handler is specified, the [data] event will be
 	* _end_ {_String_}: ending pattern to look for
 	* _stringQuotes_ {_Array_}: array of string delimiters (default=['"', "'"]). Use an empty array to disable string content processing
 	* `handler(token)`
-* `noop()`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
+* `noop(next)`: passthrough - does not do anything except applying given properties (useful to branch rules without having to use `atok#saveRuleSet()` and `atok#loadRuleSet()`)
+	* _next_ {_String_}: next ruleset to load
 * `wait(atokPattern[...atokPattern], handler)`: wait for the given pattern. Nothing happens until data is received that triggers the pattern. Must be preceded by `continue()` to properly work. Typical usage is when expecting a string the starting quote is received but not the end... so wait until then and resume the rules workflow.
 * `nvp([nameCharSet, separator, endPattern] handler)`: parse a named value pair (default nameCharSet={ start: 'aA0_', end: 'zZ9_' }, separator==, endPattern={ firstOf: ' \t\n\r' }). Disable endPattern by setting it to '' or [].
 	* `handler(name, value)`

@@ -9,6 +9,10 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
 
   var handler = args.pop()
 
+  // Special case: if end is not set, use the start value
+  if (arguments.length === 0 || !arguments[1])
+    args[1] = args[0]
+
   function utf8Done (data) {
     if (isQuiet) return handler(utf8Current)
 
@@ -92,10 +96,10 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
   return atok
     .groupRule(true)
       .continue(
-          this._helper_continueSuccess(props, 4, 0)
+          this._helper_continueSuccess(props, 5, 0)
         , 0
         )
-      .addRule('"', { firstOf: ['"', '\\'] }, hasEscapeFirst, handler)
+      .addRule(args[0], { firstOf: args.slice(1) }, hasEscapeFirst, handler)
       // Rule failed:
       // - escape found
       // - not a string
@@ -106,7 +110,7 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
         .addRule(isEscaped, 'utf8-checkEscaped')
       .break(true)
         .continue( -3, this._helper_continueFailure(props, 3, -3) )
-          .addRule('"', 'utf8-checkString')
+          .addRule(args[0], 'utf8-checkString')
       .break().continue()
       .ignore()
       // Process escaped char
@@ -116,7 +120,7 @@ module.exports.utf8 = function (/* start, end, esc, handler */) {
         , 0
         )
       .trim(true).quiet()
-        .addRule('', { firstOf: ['"', '\\'] }, hasEscape, utf8Done)
+        .addRule('', { firstOf: args.slice(1) }, hasEscape, utf8Done)
       .ignore().break().next()
         .quiet(true).continue(-2)
           .addRule(charList, function utf8CharPush (data, idx) {

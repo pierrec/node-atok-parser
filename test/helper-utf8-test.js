@@ -40,6 +40,44 @@ describe('Parser UTF-8 Helper', function () {
     })
   })
 
+  describe('with custom parameters: no escape', function () {
+    function customParser () {
+      atok.utf8("'", "'", null)
+      .on('data', function (token, idx, type) {
+        self.emit('data', token, idx, type)
+      })
+    }
+    var cParser = atokParser.createParser(customParser)
+    var p = new cParser()
+
+    it('should parse the input data', function (done) {
+      p.on('data', function (data) {
+        assert.equal(data, 'abcé123')
+        done()
+      })
+      p.write("'abcé123'")
+    })
+  })
+
+  describe('with custom parameters: no end', function () {
+    function customParser () {
+      atok.utf8("'", null, null)
+      .on('data', function (token, idx, type) {
+        self.emit('data', token, idx, type)
+      })
+    }
+    var cParser = atokParser.createParser(customParser)
+    var p = new cParser()
+
+    it('should parse the input data', function (done) {
+      p.on('data', function (data) {
+        assert.equal(data, 'abcé123')
+        done()
+      })
+      p.write("'abcé123'")
+    })
+  })
+
   describe('with special characters', function () {
     var p = new Parser()
 
