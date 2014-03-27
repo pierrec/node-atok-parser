@@ -35,6 +35,7 @@ describe('Parser Helpers', function () {
         function handler (token, idx, type) {
           switch (type) {
             case 'data':
+              assert.equal(p.atok.offset, 0)
               done()
             break
             default:
@@ -63,6 +64,27 @@ describe('Parser Helpers', function () {
 
         p.on('data', handler)
         p.write('-. ')
+        done(err)
+      })
+    })
+
+    describe('with an invalid float #3', function () {
+      var Parser = atokParser.createParserFromFile('./parsers/float3HelperParser.js', 'options')
+      var p = new Parser(options), err
+
+      it('should fail and move to the next rule', function (done) {
+        function handler (token, idx, type) {
+          switch (type) {
+            case 'data':
+              assert.equal(p.atok.offset, 0)
+            break
+            default:
+              err = new Error('handler should not be called')
+          }
+        }
+
+        p.on('data', handler)
+        p.write('- ')
         done(err)
       })
     })
@@ -428,6 +450,30 @@ describe('Parser Helpers', function () {
       })
     })
 
+    describe('with a split up float 7', function () {
+      var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
+      var p = new Parser(options), err
+
+      it('should parse it', function (done) {
+        function handler (token, idx, type) {
+          switch (type) {
+            case 'float':
+              assert.equal(typeof token, 'number')
+              assert.equal(token, -123.456)
+            break
+            default:
+              err = new Error('Unknown type: ' + type)
+          }
+        }
+
+        p.on('data', handler)
+        p.write('-')
+        p.write('123.456')
+        p.end()
+        done()
+      })
+    })
+
     describe('with a non ending number', function () {
       var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
       var p = new Parser(options), err
@@ -450,6 +496,31 @@ describe('Parser Helpers', function () {
         p.on('data', handler)
         p.write('123')
         assert.equal(res, undefined)
+        done()
+      })
+    })
+
+    describe('with an ending number', function () {
+      var Parser = atokParser.createParserFromFile('./parsers/floatHelperParser.js', 'options')
+      var p = new Parser(options), err
+      
+      it('should not parse it', function (done) {
+        var res
+
+        function handler (token, idx, type) {
+          switch (type) {
+            case 'float':
+              assert.equal(typeof token, 'number')
+              assert.equal(token, '123')
+              res = token
+            break
+            default:
+              err = new Error('Unknown type: ' + type)
+          }
+        }
+
+        p.on('data', handler)
+        p.end('123')
         done()
       })
     })

@@ -1,6 +1,8 @@
 atok
 	.whitespace()
+	.quiet(true)
 	.float()
+	.quiet()
 	.addRule(1, 'data')
 	.on('data', function (token, idx, type) {
 		self.emit('data', token, idx, type)
