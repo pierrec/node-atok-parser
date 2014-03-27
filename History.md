@@ -1,10 +1,15 @@
-0.4.3 / 2014-03-27
+0.4.4 / 2014-03-27
 ==================
 
 * Fix: float():
 	* dont move offset on invalid float
 	* Infinity is a valid float value
 	* quiet(true).float() does not skip invalid float
+
+0.4.3 / 2013-03-13
+==================
+
+* Updated to support eval 0.1
 
 0.4.2 / 2012-12-04
 ==================
